@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
     }
 
     private void initializeCards() {
+        //TODO: add your cards to the deck here
         cards = new ArrayList<>();
         initializeTodo();
     }

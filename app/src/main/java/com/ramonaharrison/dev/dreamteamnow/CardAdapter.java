@@ -17,8 +17,7 @@ import java.util.List;
  * on 6/23/15.
  */
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
-
+public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<CardInfo> cardList;
     private int lastPosition = -1;
     Context context;
@@ -33,49 +32,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         return cardList.size();
     }
 
-    @Override
-    public void onBindViewHolder(CardViewHolder cardViewHolder, int i) {
-
-        if (cardList.get(i).getType().equals("todo")) {
-            TodoViewHolder todoViewHolder = (TodoViewHolder) cardViewHolder;
-            TodoInfo todo = (TodoInfo) cardList.get(i);
-            todoViewHolder.name.setText(todo.getName());
-            todoViewHolder.description.setText(todo.getDescription());
-            todoViewHolder.time.setText(todo.getWhenString());
-            todoViewHolder.location.setText(todo.getWhereString());
-            todoViewHolder.minutesBefore.setText("" + todo.getMinutesBefore());
-            setAnimation(todoViewHolder.todoCard, i);
-        }
-
-    }
-
-    private void setAnimation(View viewToAnimate, int position)
-    {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
-            Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_from_bottom);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
-    }
-
-    @Override
-    public TodoViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View itemView = LayoutInflater.
-                from(viewGroup.getContext()).
-                inflate(R.layout.todo_card, viewGroup, false);
-
-        return new TodoViewHolder(itemView);
-    }
-
-    public class CardViewHolder extends RecyclerView.ViewHolder {
-        public CardViewHolder(View v) {
-            super(v);
-        }
-    }
-
-    public class TodoViewHolder extends CardViewHolder {
+    public class TodoViewHolder extends RecyclerView.ViewHolder {
         protected TextView name;
         protected TextView description;
         protected TextView time;
@@ -94,5 +51,52 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         }
     }
 
-}
+    @Override
+    public int getItemViewType(int position) {
+        // Just as an example, return 0 or 2 depending on position
+        // Note that unlike in ListView adapters, types don't have to be contiguous
+        return 0;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+         if (viewType == 0) {
+             View itemView = LayoutInflater.
+                     from(parent.getContext()).
+                     inflate(R.layout.todo_card, parent, false);
+
+             return new TodoViewHolder(itemView);
+         }
+
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+
+        if (viewHolder.getItemViewType() == 0) {
+            TodoInfo todo = (TodoInfo) cardList.get(position);
+            TodoViewHolder todoViewHolder = (TodoViewHolder) viewHolder;
+            todoViewHolder.name.setText(todo.getName());
+            todoViewHolder.description.setText(todo.getDescription());
+            todoViewHolder.time.setText(todo.getWhenString());
+            todoViewHolder.location.setText(todo.getWhereString());
+            todoViewHolder.minutesBefore.setText("" + todo.getMinutesBefore());
+            setAnimation(todoViewHolder.todoCard, position);
+        }
+    }
+
+
+    private void setAnimation(View viewToAnimate, int position) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_from_bottom);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
+
+ }
+
 
