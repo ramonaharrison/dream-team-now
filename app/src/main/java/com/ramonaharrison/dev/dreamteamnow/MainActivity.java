@@ -33,6 +33,7 @@ public class MainActivity extends Activity {
         //TODO: add your cards to the deck here
         cards = new ArrayList<>();
         initializeTodo();
+        cards.add(new WeatherInfo(MainActivity.this));
     }
 
     private void initializeTodo() {
