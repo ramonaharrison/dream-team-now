@@ -20,7 +20,10 @@ import java.util.List;
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<CardInfo> cardList;
     private int lastPosition = -1;
-    Context context;
+    private Context context;
+
+    // TODO: add an int value for each card type
+    private final int TODO = 1;
 
     public CardAdapter(List<CardInfo> cardList, Context context) {
         this.cardList = cardList;
@@ -32,6 +35,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return cardList.size();
     }
 
+    // TODO: create a holder class for each card type
     public class TodoViewHolder extends RecyclerView.ViewHolder {
         protected TextView name;
         protected TextView description;
@@ -53,14 +57,20 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        // Just as an example, return 0 or 2 depending on position
-        // Note that unlike in ListView adapters, types don't have to be contiguous
+
+        // TODO: add an if statement/int value for each card type
+        if (cardList.get(position).getType().equals("todo")) {
+            return TODO;
+        }
         return 0;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-         if (viewType == 0) {
+
+         // TODO: add an if statement for each card type
+
+         if (viewType == TODO) {
              View itemView = LayoutInflater.
                      from(parent.getContext()).
                      inflate(R.layout.todo_card, parent, false);
@@ -74,7 +84,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
-        if (viewHolder.getItemViewType() == 0) {
+        // TODO: add an if statement for each card type
+
+        if (viewHolder.getItemViewType() == TODO) {
             TodoInfo todo = (TodoInfo) cardList.get(position);
             TodoViewHolder todoViewHolder = (TodoViewHolder) viewHolder;
             todoViewHolder.name.setText(todo.getName());
