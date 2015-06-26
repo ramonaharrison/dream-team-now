@@ -23,7 +23,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<CardInfo> cardList;
     private int lastPosition = -1;
-    Context context;
+    private Context context;
+
+    // TODO: add an int value for each card type
+    private final int TODO = 1;
 
     public CardAdapter(List<CardInfo> cardList, Context context) {
         this.cardList = cardList;
@@ -35,6 +38,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return cardList.size();
     }
 
+    // TODO: create a holder class for each card type
     public class TodoViewHolder extends RecyclerView.ViewHolder {
         protected TextView name;
         protected TextView description;
@@ -70,8 +74,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        // Just as an example, return 0 or 2 depending on position
-        // Note that unlike in ListView adapters, types don't have to be contiguous
+        // TODO: add an if statement
         if(cardList.get(position).getType().equals("todo")){
             return TODO;
         }else if(cardList.get(position).getType().equals("weather")){
@@ -83,6 +86,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+         // TODO: add an if statement for each card type
          if (viewType == TODO) {
              View itemView = LayoutInflater.
                      from(parent.getContext()).
@@ -102,7 +106,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-
+        // TODO: add an if statement for each card type
         if (viewHolder.getItemViewType() == TODO) {
             TodoInfo todo = (TodoInfo) cardList.get(position);
             TodoViewHolder todoViewHolder = (TodoViewHolder) viewHolder;
@@ -110,7 +114,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             todoViewHolder.description.setText(todo.getDescription());
             todoViewHolder.time.setText(todo.getWhenString());
             todoViewHolder.location.setText(todo.getWhereString());
-            todoViewHolder.minutesBefore.setText("" + todo.getMinutesBefore());
+            todoViewHolder.minutesBefore.setText(todo.getMinutesBeforeString());
             setAnimation(todoViewHolder.todoCard, position);
         }else if (viewHolder.getItemViewType() == WEATHER) {
             WeatherInfo weather = (WeatherInfo) cardList.get(position);
@@ -124,8 +128,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void setAnimation(View viewToAnimate, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
+        if (position > lastPosition) {
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_from_bottom);
             viewToAnimate.startAnimation(animation);
             lastPosition = position;

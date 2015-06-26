@@ -1,5 +1,7 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
+import android.location.Location;
+
 import java.util.Calendar;
 
 /**
@@ -10,6 +12,7 @@ public class TodoInfo extends CardInfo {
     private String name;
     private String description;
     private Calendar when;
+    private Location where;
     private boolean isReminder;
     private int minutesBefore;
 
@@ -20,6 +23,15 @@ public class TodoInfo extends CardInfo {
         this.when = when;
         this.isReminder = isReminder;
         this.minutesBefore = minBeforeEvent;
+    }
+
+    public TodoInfo(String name, String description, Calendar when) {
+        this.setType("todo");
+        this.name = name;
+        this.description = description;
+        this.when = when;
+        this.isReminder = false;
+        this.minutesBefore = 0;
     }
 
     public TodoInfo() {
@@ -64,6 +76,10 @@ public class TodoInfo extends CardInfo {
 
     public int getMinutesBefore() {
         return minutesBefore;
+    }
+
+    public String getMinutesBeforeString() {
+        return "Remind me " + getMinutesBefore() + " minutes before.";
     }
 
     public void setMinutesBefore(int minutesBefore) {

@@ -29,10 +29,9 @@ public class WeatherInfo extends CardInfo {
     public WeatherInfo(Context cont){
         this.context = cont.getApplicationContext();
         setType("weather");
+        setPriority(1);
         Location location = getLocation();
         setLongLat(location);
-
-
     }
 
     private Location getLocation(){
