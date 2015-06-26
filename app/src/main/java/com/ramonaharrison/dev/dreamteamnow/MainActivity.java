@@ -3,7 +3,10 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuInflater;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,13 +23,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initializeRecyclerView();
-
         initializeCards();
-
         setAdapter();
-
     }
 
     private void initializeCards() {
@@ -54,6 +53,13 @@ public class MainActivity extends Activity {
     private void setAdapter() {
         CardAdapter cAdapter = new CardAdapter(cards, getApplicationContext());
         recyclerView.setAdapter(cAdapter);
+    }
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.popup_menu, popup.getMenu());
+        popup.show();
     }
 
 }

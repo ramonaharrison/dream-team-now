@@ -93,7 +93,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             todoViewHolder.description.setText(todo.getDescription());
             todoViewHolder.time.setText(todo.getWhenString());
             todoViewHolder.location.setText(todo.getWhereString());
-            todoViewHolder.minutesBefore.setText("" + todo.getMinutesBefore());
+            todoViewHolder.minutesBefore.setText(todo.getMinutesBeforeString());
             setAnimation(todoViewHolder.todoCard, position);
         }
     }
@@ -101,8 +101,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void setAnimation(View viewToAnimate, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
+        if (position > lastPosition) {
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_from_bottom);
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
