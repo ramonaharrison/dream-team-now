@@ -18,15 +18,13 @@ import java.util.List;
  */
 
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    final int TODO = 1;
-    final int WEATHER = 2;
-
     private List<CardInfo> cardList;
     private int lastPosition = -1;
     private Context context;
 
     // TODO: add an int value for each card type
     private final int TODO = 1;
+    final int WEATHER = 2;
 
     public CardAdapter(List<CardInfo> cardList, Context context) {
         this.cardList = cardList;
@@ -74,7 +72,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        // TODO: add an if statement
+        // TODO: add an if statement/int value for each card type
         if(cardList.get(position).getType().equals("todo")){
             return TODO;
         }else if(cardList.get(position).getType().equals("weather")){
