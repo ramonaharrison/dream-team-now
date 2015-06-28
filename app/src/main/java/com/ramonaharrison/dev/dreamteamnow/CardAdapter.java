@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -24,11 +25,13 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // TODO: add an int value for each card type
     private final int TODO = 1;
+    private final int TREND = 11;
 
     public CardAdapter(List<CardInfo> cardList, Context context) {
         this.cardList = cardList;
         this.context = context;
     }
+
 
     @Override
     public int getItemCount() {
@@ -55,6 +58,25 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public class TrendingViewHolder extends RecyclerView.ViewHolder{
+
+        TextView title,section,description;
+        CardView trendCard;
+        ImageView thumbnail;
+
+        public TrendingViewHolder(View v){
+            super(v);
+            title = (TextView) v.findViewById(R.id.newsTitle);
+            section = (TextView) v.findViewById(R.id.newsSection);
+            description = (TextView) v.findViewById(R.id.newsDescription);
+            thumbnail = (ImageView) v.findViewById(R.id.newsThumbnail);
+            trendCard = (CardView) v.findViewById(R.id.trend_card_view);
+
+        }
+
+
+    }
+
     @Override
     public int getItemViewType(int position) {
 
@@ -62,6 +84,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (cardList.get(position).getType().equals("todo")) {
             return TODO;
         }
+        else if(cardList.get(position).getType().equals("trend"))
+            return TREND;
+
         return 0;
     }
 
@@ -76,6 +101,13 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                      inflate(R.layout.todo_card, parent, false);
 
              return new TodoViewHolder(itemView);
+         }
+        else if(viewType == TREND){
+             View itemView = LayoutInflater.
+                     from(parent.getContext()).
+                     inflate(R.layout.trending_card, parent, false);
+
+             return new TrendingViewHolder(itemView);
          }
 
         return null;
@@ -95,6 +127,15 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             todoViewHolder.location.setText(todo.getWhereString());
             todoViewHolder.minutesBefore.setText(todo.getMinutesBeforeString());
             setAnimation(todoViewHolder.todoCard, position);
+        }
+        else if (viewHolder.getItemViewType() == TREND) {
+            TrendInfo trendInfo = (TrendInfo) cardList.get(position);
+            TrendingViewHolder trendViewHolder = (TrendingViewHolder) viewHolder;
+            trendViewHolder.section.setText(trendInfo.getNewsStories().get(0).getSection());
+            trendViewHolder.title.setText(trendInfo.getNewsStories().get(0).getTitle());
+            trendViewHolder.description.setText(trendInfo.getNewsStories().get(0).getAbstract());
+            //Set thumbnail image here
+            setAnimation(trendViewHolder.trendCard, position);
         }
     }
 

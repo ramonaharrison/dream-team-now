@@ -31,7 +31,14 @@ public class MainActivity extends Activity {
     private void initializeCards() {
         //TODO: add your cards to the deck here
         cards = new ArrayList<>();
+        initializeTrend();
         initializeTodo();
+    }
+
+    private void initializeTrend(){
+        TrendInfo trend = new TrendInfo();
+        cards.add(trend);
+
     }
 
     private void initializeTodo() {
@@ -61,5 +68,6 @@ public class MainActivity extends Activity {
         inflater.inflate(R.menu.popup_menu, popup.getMenu());
         popup.show();
     }
+
 
 }
