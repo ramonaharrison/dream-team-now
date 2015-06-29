@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -58,15 +59,23 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public class WeatherViewHolder extends RecyclerView.ViewHolder {
 
-        protected TextView longitude;
-        protected TextView latitude;
         protected CardView weatherCard;
+        protected TextView location;
+        protected TextView condition;
+        protected TextView wind;
+        protected TextView humidity;
+        protected ImageView conditionImage;
+        protected TextView temp;
 
         public WeatherViewHolder(View v) {
             super(v);
-            longitude = (TextView) v.findViewById(R.id.longitude);
-            latitude = (TextView) v.findViewById(R.id.latitude);
             weatherCard = (CardView) v.findViewById(R.id.weather_card_view);
+            location = (TextView) v.findViewById(R.id.location);
+            condition = (TextView) v.findViewById(R.id.condition);
+            wind = (TextView) v.findViewById(R.id.wind);
+            humidity = (TextView) v.findViewById(R.id.humidity);
+            conditionImage = (ImageView) v.findViewById(R.id.condition_image);
+            temp = (TextView) v.findViewById(R.id.temp);
         }
     }
 
@@ -117,8 +126,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }else if (viewHolder.getItemViewType() == WEATHER) {
             WeatherInfo weather = (WeatherInfo) cardList.get(position);
             WeatherViewHolder weatherViewHolder = (WeatherViewHolder) viewHolder;
-            weatherViewHolder.latitude.setText(weather.getLatitude() + "");
-            weatherViewHolder.longitude.setText(weather.getLongitude() + "");
+            weather.bindViews(weatherViewHolder);
             setAnimation(weatherViewHolder.weatherCard, position);
         }
     }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 
@@ -72,7 +71,6 @@ public class MainActivity extends Activity {
         for(int i = 1; i < cardList.size(); i++){
             int currentPriority = cardList.get(i).getPriority();
             int previousPriority = cardList.get(i-1).getPriority();
-            Log.d("Priorities:","current: " + currentPriority + ", prev: " + previousPriority);
             if(currentPriority < previousPriority){
                 int j = 1;
                 for(;i-j >= 0; j++){
