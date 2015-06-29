@@ -1,6 +1,7 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.context = context;
     }
 
-    public static class NewsViewHolder extends RecyclerView.ViewHolder {
+    public class NewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         protected TextView storyTitle, storyDescription, storyTime;
         protected ImageView storyImage;
@@ -34,12 +35,18 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public NewsViewHolder(View v) {
             super(v);
 
+            v.setOnClickListener(this);
             storyTitle = (TextView) v.findViewById(R.id.newsStoryTitle);
             storyDescription = (TextView) v.findViewById(R.id.newsStoryDescription);
             storyTime = (TextView)v.findViewById(R.id.newsStoryTime);
             storyImage = (ImageView) v.findViewById(R.id.newsStoryImage);
         }
 
+        @Override
+        public void onClick(View v) {
+           Intent intent = new Intent(context, WebActivity.class);
+           context.startActivity(intent);
+        }
     }
 
     @Override

@@ -51,7 +51,6 @@ public class TrendInfo extends CardInfo {
     public void loadImage(Context context, ImageView imgView, int num){
         String url = getNewsStories().get(num).getThumbnailStandard();
 
-        //TODO: Placeholder image for null multimedia
         try{
             Picasso.with(context).load(url).into(imgView);
         }
