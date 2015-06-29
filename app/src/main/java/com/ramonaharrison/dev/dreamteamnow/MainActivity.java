@@ -2,6 +2,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ public class MainActivity extends Activity {
     private RecyclerView recyclerView;
     private List<CardInfo> cards;
     private Calendar calendar;
+    CardAdapter cAdapter;
 
 
     @Override
@@ -27,6 +29,15 @@ public class MainActivity extends Activity {
         initializeRecyclerView();
         initializeCards();
         setAdapter();
+        setItemTouchHelper();
+
+        // FIXME: Temporary fix, This refresh should be handled in TrendInfo.
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                cAdapter.notifyItemChanged(cAdapter.findTrendCard());
+            }
+        },2000);
     }
 
     private void initializeCards() {
@@ -59,10 +70,13 @@ public class MainActivity extends Activity {
     }
 
     private void setAdapter() {
-        CardAdapter cAdapter = new CardAdapter(cards, getApplicationContext());
+        cAdapter = new CardAdapter(cards, getApplicationContext());
         recyclerView.setAdapter(cAdapter);
 
-        //ItemTouch Helper
+    }
+
+    //ItemTouch Helper for swiping/dragging
+    public void setItemTouchHelper(){
         ItemTouchHelper.Callback callback = new CustomItemTouchHelper(cAdapter);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);

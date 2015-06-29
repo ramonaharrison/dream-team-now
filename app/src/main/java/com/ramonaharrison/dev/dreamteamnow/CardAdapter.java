@@ -131,6 +131,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         else if (viewHolder.getItemViewType() == TREND) {
             TrendInfo trendInfo = (TrendInfo) cardList.get(position);
             TrendingViewHolder trendViewHolder = (TrendingViewHolder) viewHolder;
+
             trendViewHolder.section.setText(trendInfo.getNewsStories().get(0).getSection());
             trendViewHolder.title.setText(trendInfo.getNewsStories().get(0).getTitle());
             trendViewHolder.description.setText(trendInfo.getNewsStories().get(0).getAbstract());
@@ -139,6 +140,15 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public int findTrendCard(){
+        int trend = 0;
+        for(int i = 0; i < cardList.size(); i++){
+            if(cardList.get(i).getType() == "trend"){
+                return i;
+            }
+        }
+        return -1;
+    }
 
     private void setAnimation(View viewToAnimate, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated
@@ -149,6 +159,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    //Methods for ItemTouchHelper, removeItem for swiping, moveItems for drag&drop
     public void removeItem(int position) {
         cardList.remove(position);
         notifyItemRemoved(position);

@@ -5,49 +5,26 @@
     android:id="@+id/trend_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
     android:orientation="horizontal"
+    android:layout_margin="5dp"
     card_view:cardCornerRadius="4dp">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/newsThumbnail"/>
+        </LinearLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/newsSection"
-                android:hint="Section"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/newsTitle"
-                android:hint="Title"
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/newsDescription"
-                android:hint="Description about the news story "
-                />
-            <!--Put ellipsis on ^ textview-->
-
-            </LinearLayout>
-
-    </LinearLayout>
-
+        </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft=""
+        android:text="More"/>
 
 </android.support.v7.widget.CardView>
 

@@ -22,15 +22,13 @@ import java.util.List;
  */
 public class TrendInfo extends CardInfo {
 
-    String urlTEST = null;
-    String section;
-    String title;
     List<Result> newsStories = new ArrayList<>();
+
 
     public TrendInfo(){
 
-
         setType("trend");
+
         Result res = new Result();
         res.setTitle("THE WORLD");
         res.setSection("USA");
@@ -39,32 +37,21 @@ public class TrendInfo extends CardInfo {
         new AsyncNews().execute();
     }
 
-   public TrendInfo(String section, String title){
-       setType("trend");
-       this.section = section;
-       this.title = title;
+    // TODO: Refresh Trend Card on CardAdapter
 
-   }
-
-    public String getSection(){
-        return section;
-    }
-
-    public String getTitle(){
-        return title;
-    }
 
     public List<Result> getNewsStories(){
         return newsStories;
     }
 
-    public class AsyncNews extends AsyncTask<Void, Void, List<Result>> {
+
+    public class AsyncNews extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected List<Result> doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
 
             String newsUrl = "http://api.nytimes.com/svc/news/v3/content/nyt/all/24?api-key=1fb09ee32a69fd6c40f98e7e38f6b0a4:6:72391617";
-            //List<Result> newsList = new ArrayList<>();
+            List<Result> newsList = new ArrayList<>();
 
             try {
                 URL url = new URL(newsUrl);
@@ -72,19 +59,6 @@ public class TrendInfo extends CardInfo {
                 connection.setRequestMethod("GET");
                 connection.connect();
                 String output = readStream(connection.getInputStream());
-
-//                connection.setConnectTimeout(0);
-//                connection.setReadTimeout(0);
-//                InputStream in = connection.getInputStream();
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//                StringBuilder builder = new StringBuilder();
-//                String line = null;
-//                while ((line = reader.readLine()) != null) {
-//                    builder.append(line + "\n");
-//                }
-//                String output = builder.toString();
-//                urlTEST = output;
-
 
                 JSONObject fullWebPage = new JSONObject(output);
                 JSONArray arr = fullWebPage.getJSONArray("results");
@@ -100,26 +74,17 @@ public class TrendInfo extends CardInfo {
                     result.setUrl(arr2.getString("url"));
                     result.setThumbnailStandard(arr2.getString("thumbnail_standard"));
 
-                    newsStories.add(result);
+//                    newsStories.add(result);
 
-                    //newsList.add(result);
+                    newsList.add(result);
                 }
+                newsStories = newsList;
             }
             catch(Exception e){
-                Log.d("json", "" + e.getStackTrace().toString());
+                Log.d("json", "" + e.getMessage());
             }
 
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<Result> list) {
-            super.onPostExecute(list);
-            //Update list here
-            //newsStories = list;
-            Log.d("asyncTas", "Post execute");
-            Log.d("asyncTas", "" + urlTEST);
-            Log.d("asyncTas","" + getNewsStories().get(0).getAbstract());
         }
 
     }
