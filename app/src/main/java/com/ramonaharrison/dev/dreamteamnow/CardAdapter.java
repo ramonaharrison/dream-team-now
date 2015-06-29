@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -60,18 +61,25 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public class TrendingViewHolder extends RecyclerView.ViewHolder{
 
-        TextView title,section,description;
+        TextView title,section,title2,section2;
         CardView trendCard;
-        ImageView thumbnail;
+        ImageView thumbnail, thumbnail2;
+        Button moreButton;
 
         public TrendingViewHolder(View v){
             super(v);
             title = (TextView) v.findViewById(R.id.newsTitle);
             section = (TextView) v.findViewById(R.id.newsSection);
-            description = (TextView) v.findViewById(R.id.newsDescription);
+//            description = (TextView) v.findViewById(R.id.newsDescription);
             thumbnail = (ImageView) v.findViewById(R.id.newsThumbnail);
-            trendCard = (CardView) v.findViewById(R.id.trend_card_view);
 
+            title2 = (TextView) v.findViewById(R.id.newsTitleSecond);
+            section2 = (TextView) v.findViewById(R.id.newsSectionSecond);
+//            description2 = (TextView) v.findViewById(R.id.newsDescriptionSecond);
+            thumbnail2 = (ImageView) v.findViewById(R.id.newsThumbnailSecond);
+
+            moreButton = (Button) v.findViewById(R.id.moreBtn);
+            trendCard = (CardView) v.findViewById(R.id.trend_card_view);
         }
 
 
@@ -134,7 +142,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             trendViewHolder.section.setText(trendInfo.getNewsStories().get(0).getSection());
             trendViewHolder.title.setText(trendInfo.getNewsStories().get(0).getTitle());
-            trendViewHolder.description.setText(trendInfo.getNewsStories().get(0).getAbstract());
+            trendInfo.loadImage(context,trendViewHolder.thumbnail, 0);
+
+            trendViewHolder.section2.setText(trendInfo.getNewsStories().get(1).getSection());
+            trendViewHolder.title2.setText(trendInfo.getNewsStories().get(1).getTitle());
+            trendInfo.loadImage(context,trendViewHolder.thumbnail2, 1);
+
             //Set thumbnail image here
             setAnimation(trendViewHolder.trendCard, position);
         }
@@ -159,7 +172,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    //Methods for ItemTouchHelper, removeItem for swiping, moveItems for drag&drop
+    /* Methods for ItemTouchHelper.
+    *  -removeItem for swiping
+    *  -moveItems for drag&drop
+    */
     public void removeItem(int position) {
         cardList.remove(position);
         notifyItemRemoved(position);

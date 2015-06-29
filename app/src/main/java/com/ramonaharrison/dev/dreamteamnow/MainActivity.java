@@ -1,6 +1,7 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,7 +38,7 @@ public class MainActivity extends Activity {
             public void run() {
                 cAdapter.notifyItemChanged(cAdapter.findTrendCard());
             }
-        },2000);
+        },3000);
     }
 
     private void initializeCards() {
@@ -90,6 +91,12 @@ public class MainActivity extends Activity {
         popup.show();
     }
 
+    public void moreNews(View v){
+        Intent moreNewsIntent = new Intent(this, NewsActivity.class);
+        moreNewsIntent.putExtra("array", "h");
+        startActivity(moreNewsIntent);
+        overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
+    }
 
 
 }

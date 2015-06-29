@@ -1,9 +1,12 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.ramonaharrison.dev.dreamteamnow.model.Result;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,8 +33,9 @@ public class TrendInfo extends CardInfo {
         setType("trend");
 
         Result res = new Result();
-        res.setTitle("THE WORLD");
+        res.setTitle("THE WORLD IS BURNING");
         res.setSection("USA");
+        newsStories.add(res);
         newsStories.add(res);
 
         new AsyncNews().execute();
@@ -43,6 +47,17 @@ public class TrendInfo extends CardInfo {
     public List<Result> getNewsStories(){
         return newsStories;
     }
+
+    public void loadImage(Context context, ImageView imgView, int num){
+        String url = getNewsStories().get(num).getThumbnailStandard();
+        if(url == null){
+
+            //TODO: Placeholder image for null multimedia
+            url = "http://static01.nyt.com/images/2015/06/29/travel/29WTGNow-Asheville-1/29WTGNow-Asheville-1-thumbStandard.jpg";
+        }
+        Picasso.with(context).load(url).into(imgView);
+    }
+
 
 
     public class AsyncNews extends AsyncTask<Void, Void, Void> {

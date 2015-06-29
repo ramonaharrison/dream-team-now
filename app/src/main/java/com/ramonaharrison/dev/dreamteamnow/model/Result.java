@@ -1,5 +1,7 @@
 package com.ramonaharrison.dev.dreamteamnow.model;
 
+import java.util.List;
+
 /**
  * Created by kadeemmaragh on 6/27/15.
  */
@@ -22,7 +24,7 @@ public class Result {
     private String kicker;
     private String subheadline;
     private String geoFacet;
-    private String multimedia;
+    private List multimedia;
 
     /**
      *
@@ -318,7 +320,7 @@ public class Result {
      * @return
      * The multimedia
      */
-    public String getMultimedia() {
+    public List getMultimedia() {
         return multimedia;
     }
 
@@ -327,7 +329,7 @@ public class Result {
      * @param multimedia
      * The multimedia
      */
-    public void setMultimedia(String multimedia) {
+    public void setMultimedia(List multimedia) {
         this.multimedia = multimedia;
     }
 
