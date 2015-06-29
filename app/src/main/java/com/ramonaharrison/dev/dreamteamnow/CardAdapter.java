@@ -149,6 +149,19 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public void removeItem(int position) {
+        cardList.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void moveItems(int startPos, int currentPos){
+        CardInfo hold = cardList.get(startPos);
+        cardList.remove(startPos);
+        cardList.add(currentPos,hold);
+        notifyItemMoved(startPos, currentPos);
+
+    }
+
  }
 
 

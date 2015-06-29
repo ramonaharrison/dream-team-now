@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuInflater;
 import android.view.View;
 
@@ -60,6 +61,12 @@ public class MainActivity extends Activity {
     private void setAdapter() {
         CardAdapter cAdapter = new CardAdapter(cards, getApplicationContext());
         recyclerView.setAdapter(cAdapter);
+
+        //ItemTouch Helper
+        ItemTouchHelper.Callback callback = new CustomItemTouchHelper(cAdapter);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     public void showPopup(View v) {
@@ -68,6 +75,7 @@ public class MainActivity extends Activity {
         inflater.inflate(R.menu.popup_menu, popup.getMenu());
         popup.show();
     }
+
 
 
 }

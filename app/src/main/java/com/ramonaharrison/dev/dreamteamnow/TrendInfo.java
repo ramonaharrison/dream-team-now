@@ -22,6 +22,7 @@ import java.util.List;
  */
 public class TrendInfo extends CardInfo {
 
+    String urlTEST = null;
     String section;
     String title;
     List<Result> newsStories = new ArrayList<>();
@@ -63,7 +64,7 @@ public class TrendInfo extends CardInfo {
         protected List<Result> doInBackground(Void... params) {
 
             String newsUrl = "http://api.nytimes.com/svc/news/v3/content/nyt/all/24?api-key=1fb09ee32a69fd6c40f98e7e38f6b0a4:6:72391617";
-            List<Result> newsList = new ArrayList<>();
+            //List<Result> newsList = new ArrayList<>();
 
             try {
                 URL url = new URL(newsUrl);
@@ -72,8 +73,22 @@ public class TrendInfo extends CardInfo {
                 connection.connect();
                 String output = readStream(connection.getInputStream());
 
+//                connection.setConnectTimeout(0);
+//                connection.setReadTimeout(0);
+//                InputStream in = connection.getInputStream();
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+//                StringBuilder builder = new StringBuilder();
+//                String line = null;
+//                while ((line = reader.readLine()) != null) {
+//                    builder.append(line + "\n");
+//                }
+//                String output = builder.toString();
+//                urlTEST = output;
+
+
                 JSONObject fullWebPage = new JSONObject(output);
                 JSONArray arr = fullWebPage.getJSONArray("results");
+
                 for (int i = 0; i < arr.length(); i++){
                     Result result = new Result();
 
@@ -85,27 +100,28 @@ public class TrendInfo extends CardInfo {
                     result.setUrl(arr2.getString("url"));
                     result.setThumbnailStandard(arr2.getString("thumbnail_standard"));
 
-                    newsList.add(result);
+                    newsStories.add(result);
+
+                    //newsList.add(result);
                 }
             }
             catch(Exception e){
                 Log.d("json", "" + e.getStackTrace().toString());
             }
 
-            return newsList;
+            return null;
         }
 
         @Override
         protected void onPostExecute(List<Result> list) {
             super.onPostExecute(list);
             //Update list here
-            newsStories = list;
+            //newsStories = list;
             Log.d("asyncTas", "Post execute");
-
-
-
-
+            Log.d("asyncTas", "" + urlTEST);
+            Log.d("asyncTas","" + getNewsStories().get(0).getAbstract());
         }
+
     }
 
     private String readStream(InputStream in) throws IOException {
