@@ -5,14 +5,11 @@ import android.location.Criteria;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.Location;
-import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.LocationAPI;
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.Location;
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.WeatherLocation;
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.WeatherLocationAPI;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -67,41 +64,45 @@ public class WeatherInfo extends CardInfo {
     private String[] condition;
     private String[] icon_urls;
 
-//    private AsyncCurrentWeather weatherSync;
-
     public WeatherInfo(Context context) {
         this.context = context.getApplicationContext();
         setType("weather");
         isMetric = false;
         setPriority(1);
-        android.location.Location location = getLocation();
-        setLatLon(location);
-//        weatherSync = new AsyncCurrentWeather();
-//        weatherSync.execute();
+        android.location.Location weather = getLocation();
+        setLatLon(weather);
 
         //Retrofit section start from here...
 
+        retrofitWeatherLocation();
+        retrofitWeatherConditions();
+    }
+
+    private void retrofitWeatherConditions() {
+
+    }
+
+    private void retrofitWeatherLocation() {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(ENDPOINT)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build();
 
-        LocationAPI locationAPI = restAdapter.create(LocationAPI.class);
+        WeatherLocationAPI weatherLocationAPI = restAdapter.create(WeatherLocationAPI.class);
 
         Log.d("Coords", "lat=" + latitude + " lon=" + longitude);
 
-        locationAPI.getFeed(latitude, longitude, new Callback<Location>() {
+        weatherLocationAPI.getFeed(latitude, longitude, new Callback<WeatherLocation>() {
 
             @Override
-            public void success(Location location, Response response) {
+            public void success(WeatherLocation weatherLocation, Response response) {
+                Location location = weatherLocation.getLocation();
                 country = location.getCountry();
                 state = location.getState();
                 city = location.getCity();
                 zip = location.getZip();
-                requestURL = location.getRequesturl();
+                requestURL = location.getRequesturl().replace(".html",".json");
                 Log.d("RetroFit!","Success");
-                Log.d("response", response.getUrl());
-
             }
 
             @Override
@@ -115,99 +116,6 @@ public class WeatherInfo extends CardInfo {
     private Context getContext(){
         return context;
     }
-
-//    private class AsyncCurrentWeather extends AsyncTask<Void, Void, Void>{
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//
-//            Location location = getLocation();
-//            setLatLon(location);
-//
-//            try {
-//
-//                //API JSON request for weather location JSON
-//                URL url = new URL(ENDPOINT+GEOLOOKUP+latitude+","+longitude+".json");
-//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//
-//                connection.setConnectTimeout(0);
-//                connection.setReadTimeout(0);
-//                InputStream in = connection.getInputStream();
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//                StringBuilder builder = new StringBuilder();
-//                String line;
-//                while ((line = reader.readLine()) != null) {
-//                    builder.append(line + "\n");
-//                }
-//                String geoResponse = builder.toString();
-//
-//                JSONObject geoData = new JSONObject(geoResponse);
-//                JSONObject weatherLoc = geoData.getJSONObject("location");
-//                country = weatherLoc.getString("country");
-//                state = weatherLoc.getString("state");
-//                city = weatherLoc.getString("city");
-//                zip = weatherLoc.getString("zip");
-//
-//                requestURL = weatherLoc.getString("requesturl");
-//                requestURL = requestURL.replace(".html",".json");
-//
-//                //API JSON request for current conditions
-//                URL urlConditions = new URL(ENDPOINT + FORECAST + requestURL);
-//                HttpURLConnection connectionC = (HttpURLConnection) urlConditions.openConnection();
-//                connectionC.setConnectTimeout(0);
-//                connectionC.setReadTimeout(0);
-//                InputStream inC = connectionC.getInputStream();
-//                BufferedReader readerC = new BufferedReader(new InputStreamReader(inC));
-//                StringBuilder builderC = new StringBuilder();
-//                String lineC;
-//                while ((lineC = readerC.readLine()) != null) {
-//                    builderC.append(lineC + "\n");
-//                }
-//                String conditionJSON = builderC.toString();
-//
-//                JSONObject conditionData = new JSONObject(conditionJSON);
-////                Log.d("conditionJSON:",conditionJSON);
-//                JSONObject currentObs = conditionData.getJSONObject("response");
-//
-//                tempF = currentObs.getString("tempf");
-//                tempC = currentObs.getString("tempc");
-//                weather = currentObs.getString("condition");
-//                humidity = currentObs.getString("relative_humidity");
-//                windMPH = currentObs.getDouble("wind_mph") + "";
-//                windKPH = currentObs.getDouble("wind_kpm") + "";
-//                conditionIconURL = currentObs.getString("icon_url");
-//
-//                //API JSON request for weather forecast
-//                URL urlForecast = new URL(ENDPOINT + FORECAST + requestURL);
-//                HttpURLConnection connectionFC = (HttpURLConnection) urlForecast.openConnection();
-//                connectionFC.setConnectTimeout(0);
-//                connectionFC.setReadTimeout(0);
-//                InputStream inFC = connectionFC.getInputStream();
-//                BufferedReader readerFC = new BufferedReader(new InputStreamReader(inFC));
-//                StringBuilder builderFC = new StringBuilder();
-//                String lineFC;
-//                while ((lineFC = readerFC.readLine()) != null) {
-//                    builderFC.append(lineFC + "\n");
-//                }
-//                String forecastJSON = builderFC.toString();
-//                JSONObject forecastData = new JSONObject(forecastJSON);
-//
-//            } catch (MalformedURLException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//
-//            return null;
-//        }
-//    }
-//
-//    public void destroyWeatherAsync(){
-//        if(!weatherSync.isCancelled())
-//            weatherSync.cancel(true);
-//    }
 
     private android.location.Location getLocation(){
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -273,30 +181,19 @@ public class WeatherInfo extends CardInfo {
             @Override
             public void run() {
                 Log.d("Adapter","Binding Weather Card");
-                if(city == null){ //for testing purposes
-                    (Toast.makeText(getContext(),"NULL DATA", Toast.LENGTH_LONG)).show();
-                }else {
-                    wvh.location.setText(city + ", " + state + ", " + country + ", " + zip);
-                    wvh.condition.setText(weather);
-                    wvh.humidity.setText("Percip " + humidity + "%");
-                    if (isMetric) {
-                        wvh.temp.setText(tempC + "°");
-                        wvh.wind.setText("Wind " + windMPH + "kph");
-                    } else {
-                        wvh.temp.setText(tempF + "°");
-                        wvh.wind.setText("Wind " + windMPH + "mph");
-                    }
-                    Picasso.with(wvh.weatherCard.getContext()).load(conditionIconURL).centerCrop().resize(200, 200).into(wvh.conditionImage);
+                wvh.location.setText(city + ", " + state + ", " + country + ", " + zip);
+                wvh.condition.setText(weather);
+                wvh.humidity.setText("Percip " + humidity + "%");
+                if (isMetric) {
+                    wvh.temp.setText(tempC + "°");
+                    wvh.wind.setText("Wind " + windMPH + "kph");
+                } else {
+                    wvh.temp.setText(tempF + "°");
+                    wvh.wind.setText("Wind " + windMPH + "mph");
                 }
+                Picasso.with(wvh.weatherCard.getContext()).load(conditionIconURL).centerCrop().resize(200, 200).into(wvh.conditionImage);
             }
         };
-
-//        if(weatherSync.getStatus() == AsyncTask.Status.RUNNING){
             new Handler().post(runnable);
-//        }else{
-//            new Handler().post(runnable);
-//        }
-
-
     }
 }

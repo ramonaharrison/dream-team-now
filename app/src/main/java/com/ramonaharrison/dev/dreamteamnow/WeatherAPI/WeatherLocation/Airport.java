@@ -1,4 +1,4 @@
-package com.ramonaharrison.dev.dreamteamnow.WeatherAPI;
+package com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation;
 
 import java.util.ArrayList;
 import java.util.List;

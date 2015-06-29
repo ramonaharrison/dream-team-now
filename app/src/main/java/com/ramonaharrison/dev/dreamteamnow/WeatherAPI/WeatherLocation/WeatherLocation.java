@@ -1,8 +1,8 @@
-package com.ramonaharrison.dev.dreamteamnow.WeatherAPI;
+package com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation;
 
 import com.google.gson.annotations.Expose;
 
-public class Weather {
+public class WeatherLocation {
 
     @Expose
     private Response response;
