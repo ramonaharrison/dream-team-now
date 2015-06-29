@@ -50,12 +50,16 @@ public class TrendInfo extends CardInfo {
 
     public void loadImage(Context context, ImageView imgView, int num){
         String url = getNewsStories().get(num).getThumbnailStandard();
-        if(url == null){
 
-            //TODO: Placeholder image for null multimedia
-            url = "http://static01.nyt.com/images/2015/06/29/travel/29WTGNow-Asheville-1/29WTGNow-Asheville-1-thumbStandard.jpg";
+        //TODO: Placeholder image for null multimedia
+        try{
+            Picasso.with(context).load(url).into(imgView);
         }
-        Picasso.with(context).load(url).into(imgView);
+        catch(Exception e){
+            url = "http://static01.nyt.com/images/2015/06/29/travel/29WTGNow-Asheville-1/29WTGNow-Asheville-1-thumbStandard.jpg";
+            Picasso.with(context).load(url).into(imgView);
+        }
+
     }
 
 
@@ -68,6 +72,7 @@ public class TrendInfo extends CardInfo {
             String newsUrl = "http://api.nytimes.com/svc/news/v3/content/nyt/all/24?api-key=1fb09ee32a69fd6c40f98e7e38f6b0a4:6:72391617";
             List<Result> newsList = new ArrayList<>();
 
+            //TODO: JSON response doesn't provide proper punctuation. Ex. Instead of a apostrophe, it will return &#82343(etc.). Might be able to fix before saving to string.
             try {
                 URL url = new URL(newsUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();

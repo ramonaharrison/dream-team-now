@@ -153,16 +153,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public int findTrendCard(){
-        int trend = 0;
-        for(int i = 0; i < cardList.size(); i++){
-            if(cardList.get(i).getType() == "trend"){
-                return i;
-            }
-        }
-        return -1;
-    }
-
     private void setAnimation(View viewToAnimate, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated
         if (position > lastPosition) {

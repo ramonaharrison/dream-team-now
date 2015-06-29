@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                cAdapter.notifyItemChanged(cAdapter.findTrendCard());
+                cAdapter.notifyItemChanged(findTrendCard());
             }
         },3000);
     }
@@ -93,9 +93,20 @@ public class MainActivity extends Activity {
 
     public void moreNews(View v){
         Intent moreNewsIntent = new Intent(this, NewsActivity.class);
-        moreNewsIntent.putExtra("array", "h");
+        TrendInfo info = (TrendInfo) cards.get(findTrendCard());
+        moreNewsIntent.putExtra("news", (java.io.Serializable) info.getNewsStories());
         startActivity(moreNewsIntent);
         overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
+    }
+
+    public int findTrendCard(){
+
+        for(int i = 0; i < cards.size(); i++){
+            if(cards.get(i).getType() == "trend"){
+                return i;
+            }
+        }
+        return -1;
     }
 
 

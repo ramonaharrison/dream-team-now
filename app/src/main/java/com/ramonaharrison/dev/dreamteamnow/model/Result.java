@@ -1,12 +1,13 @@
 package com.ramonaharrison.dev.dreamteamnow.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by kadeemmaragh on 6/27/15.
  */
 
-public class Result {
+public class Result implements Serializable{
 
     private String section;
     private String subsection;
