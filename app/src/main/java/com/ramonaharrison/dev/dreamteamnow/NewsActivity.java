@@ -21,6 +21,7 @@ public class NewsActivity extends Activity {
 
     //TODO: Get newsList from intent,
     // get imageNotfound image for xml.
+    // add menu item to close activity/go back
     // setonItemClick to open url on webView
 
     @Override
@@ -43,24 +44,24 @@ public class NewsActivity extends Activity {
         }
     }
 
-    public void dummyList(){
-        Result result = new Result();
-        result.setTitle("A distinguished title for a news story.");
-        result.setAbstract("Very long description of what is supposed to be in here, Very long description of what is supposed to be in here, Very long description of what is supposed to be in here.");
-        result.setThumbnailStandard("http://static01.nyt.com/images/2015/06/29/travel/29WTGNow-Asheville-1/29WTGNow-Asheville-1-thumbStandard.jpg");
-
-        news.add(result);
-        news.add(result);
-        news.add(result);
-        news.add(result);
-        news.add(result);
-        news.add(result);
-        news.add(result);
-        news.add(result);
-        news.add(result);
-        news.add(result);
-
-    }
+//    public void dummyList(){
+//        Result result = new Result();
+//        result.setTitle("A distinguished title for a news story.");
+//        result.setAbstract("Very long description of what is supposed to be in here, Very long description of what is supposed to be in here, Very long description of what is supposed to be in here.");
+//        result.setThumbnailStandard("http://static01.nyt.com/images/2015/06/29/travel/29WTGNow-Asheville-1/29WTGNow-Asheville-1-thumbStandard.jpg");
+//
+//        news.add(result);
+//        news.add(result);
+//        news.add(result);
+//        news.add(result);
+//        news.add(result);
+//        news.add(result);
+//        news.add(result);
+//        news.add(result);
+//        news.add(result);
+//        news.add(result);
+//
+//    }
 
     private void initializeRecyclerView() {
         recyclerView = (RecyclerView) findViewById(R.id.newsList);

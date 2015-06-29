@@ -20,7 +20,7 @@
             android:id="@+id/newsStoryImage"
             android:layout_width="75dp"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_add_black_24dp" />
+            />
 
         <LinearLayout
             android:layout_width="match_parent"

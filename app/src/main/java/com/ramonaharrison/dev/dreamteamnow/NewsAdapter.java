@@ -62,15 +62,14 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
+    //Handles loading picture into imgView.
     public void loadImage(Context context, String imageLink, ImageView img){
-//
-//        Picasso.with(context).load(newsStory.getThumbnailStandard()).into(newsViewHolder.storyImage);
         try{
             Picasso.with(context).load(imageLink).into(img);
         }
         catch(Exception e){
-           String url = "http://static01.nyt.com/images/2015/06/29/travel/29WTGNow-Asheville-1/29WTGNow-Asheville-1-thumbStandard.jpg";
-            Picasso.with(context).load(url).into(img);
+            Picasso.with(context).load(R.drawable.img_unavailable).into(img);
+
         }
     }
 
@@ -78,4 +77,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int getItemCount() {
         return newsList.size();
     }
+
+
+
 }

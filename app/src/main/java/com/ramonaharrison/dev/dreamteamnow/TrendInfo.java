@@ -56,8 +56,8 @@ public class TrendInfo extends CardInfo {
             Picasso.with(context).load(url).into(imgView);
         }
         catch(Exception e){
-            url = "http://static01.nyt.com/images/2015/06/29/travel/29WTGNow-Asheville-1/29WTGNow-Asheville-1-thumbStandard.jpg";
-            Picasso.with(context).load(url).into(imgView);
+            Picasso.with(context).load(R.drawable.img_unavailable).into(imgView);
+
         }
 
     }
