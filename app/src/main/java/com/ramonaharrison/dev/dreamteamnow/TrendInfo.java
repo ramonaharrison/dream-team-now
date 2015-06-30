@@ -61,7 +61,7 @@ public class TrendInfo extends CardInfo {
 
     }
 
-
+//TODO: Switch back to Retrofit
 
     public class AsyncNews extends AsyncTask<Void, Void, Void> {
 

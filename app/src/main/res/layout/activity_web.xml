@@ -1,9 +1,18 @@
-<WebView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ramonaharrison.dev.dreamteamnow.WebActivity"
-    android:id="@+id/webview">
+    tools:context="com.ramonaharrison.dev.dreamteamnow.WebActivity">
+    
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"/>
+    
+    <WebView
+        android:layout_below="@id/progressBar"
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-
-</WebView>
+</RelativeLayout>
