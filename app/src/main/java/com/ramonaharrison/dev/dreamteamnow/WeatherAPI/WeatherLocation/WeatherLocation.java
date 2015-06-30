@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 
 public class WeatherLocation {
 
-    @Expose
-    private Response response;
+//    @Expose
+//    private Response response;
     @Expose
     private Location location;
 
@@ -14,18 +14,18 @@ public class WeatherLocation {
      * @return
      * The response
      */
-    public Response getResponse() {
-        return response;
-    }
+//    public Response getResponse() {
+//        return response;
+//    }
 
     /**
      *
      * @param response
      * The response
      */
-    public void setResponse(Response response) {
-        this.response = response;
-    }
+//    public void setResponse(Response response) {
+//        this.response = response;
+//    }
 
     /**
      *

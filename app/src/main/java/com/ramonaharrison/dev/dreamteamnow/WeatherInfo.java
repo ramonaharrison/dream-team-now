@@ -6,6 +6,9 @@ import android.location.LocationManager;
 import android.os.Handler;
 import android.util.Log;
 
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.CurrentObservation;
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.WeatherConditions;
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.WeatherConditionsAPI;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.Location;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.WeatherLocation;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.WeatherLocationAPI;
@@ -75,17 +78,41 @@ public class WeatherInfo extends CardInfo {
         //Retrofit section start from here...
 
         retrofitWeatherLocation();
-        retrofitWeatherConditions();
     }
 
     private void retrofitWeatherConditions() {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(ENDPOINT)
+                .build();
 
+        WeatherConditionsAPI weatherConditionsAPI = restAdapter.create(WeatherConditionsAPI.class);
+
+        weatherConditionsAPI.getFeed(country.replace(" ","_"), state.replace(" ", "_"), city.replace(" ","_"), new Callback<WeatherConditions>() {
+
+            @Override
+            public void success(WeatherConditions weatherConditions, Response response) {
+                CurrentObservation cObs = weatherConditions.getCurrentObservation();
+
+                tempC = cObs.getTempC() + "°";
+                tempF = cObs.getTempF() + "°";
+                weather = cObs.getWeather();
+                humidity = cObs.getRelativeHumidity();
+                windMPH = cObs.getWindMph() + "mph";
+                windKPH = cObs.getWindKph() + "kph";
+                conditionIconURL = cObs.getIconUrl();
+                Log.d("Retrofit","Weather Conditions: Success");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("Retrofit","Weather Conditions: FAILED");
+            }
+        });
     }
 
     private void retrofitWeatherLocation() {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(ENDPOINT)
-                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build();
 
         WeatherLocationAPI weatherLocationAPI = restAdapter.create(WeatherLocationAPI.class);
@@ -101,8 +128,11 @@ public class WeatherInfo extends CardInfo {
                 state = location.getState();
                 city = location.getCity();
                 zip = location.getZip();
-                requestURL = location.getRequesturl().replace(".html",".json");
+                requestURL = location.getRequesturl();
+                requestURL = requestURL.replace(".html",".json");
+                Log.d("REQUESTURL",requestURL + "");
                 Log.d("RetroFit!","Success");
+                retrofitWeatherConditions();
             }
 
             @Override
@@ -185,11 +215,11 @@ public class WeatherInfo extends CardInfo {
                 wvh.condition.setText(weather);
                 wvh.humidity.setText("Percip " + humidity + "%");
                 if (isMetric) {
-                    wvh.temp.setText(tempC + "°");
-                    wvh.wind.setText("Wind " + windMPH + "kph");
+                    wvh.temp.setText(tempC);
+                    wvh.wind.setText("Wind " + windMPH);
                 } else {
-                    wvh.temp.setText(tempF + "°");
-                    wvh.wind.setText("Wind " + windMPH + "mph");
+                    wvh.temp.setText(tempF);
+                    wvh.wind.setText("Wind " + windMPH);
                 }
                 Picasso.with(wvh.weatherCard.getContext()).load(conditionIconURL).centerCrop().resize(200, 200).into(wvh.conditionImage);
             }
