@@ -3,6 +3,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.util.Log;
 
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.Currently;
@@ -263,7 +264,9 @@ public class WeatherInfo extends CardInfo {
     }
 
     public void bindViews(final CardAdapter.WeatherViewHolder weatherViewHolder){
-
+        Runnable bindViews = new Runnable() {
+            @Override
+            public void run() {
                 Log.d("Adapter","Binding Weather Card");
                 weatherViewHolder.city.setText(city);
                 weatherViewHolder.location.setText(state + " " + country + " " + zip);
@@ -277,6 +280,11 @@ public class WeatherInfo extends CardInfo {
                     weatherViewHolder.wind.setText("Wind " + windMPH);
                 }
                 Picasso.with(weatherViewHolder.weatherCard.getContext()).load(conditionIconURL).centerCrop().resize(250,250).into(weatherViewHolder.conditionImage);
+
+            }
+        };
+
+        new Handler().postDelayed(bindViews,500);
 
     }
 

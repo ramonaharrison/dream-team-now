@@ -38,18 +38,8 @@
                     android:layout_marginLeft="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:textColor="#888"
-                    android:id="@+id/condition"/>
-
-                <TextView
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/wind"
-                    android:textSize="18sp"
-                    android:layout_below="@id/condition"/>
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:layout_marginLeft="10dp"
@@ -60,6 +50,15 @@
                     android:layout_toRightOf="@id/wind"/>
 
                 </RelativeLayout>
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="#888"
+                android:id="@+id/condition"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
