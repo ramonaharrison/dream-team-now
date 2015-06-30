@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pink">#E91E63</color>
+    <color name="purple">#9C27B0</color>
+    <color name="blue">#2196F3</color>
+    <color name="lime">#CDDC39</color>
+    <color name="teal">#1DE9B6</color>
+
+    <string-array name="colors">
+        <item>@color/pink</item>
+        <item>@color/purple</item>
+        <item>@color/blue</item>
+        <item>@color/lime</item>
+        <item>@color/pink</item>
+    </string-array>
+</resources>
