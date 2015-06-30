@@ -1,38 +1,36 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.ramonaharrison.dev.dreamteamnow.model.NYTModel;
 import com.ramonaharrison.dev.dreamteamnow.model.Result;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by kadeemmaragh on 6/27/15.
  */
 public class TrendInfo extends CardInfo {
 
+    final String NEWSWIRE_URL = "http://api.nytimes.com/svc/news/v3/content/nyt/all";
     List<Result> newsStories = new ArrayList<>();
 
 
     public TrendInfo() {
 
         setType("trend");
-        new AsyncNews().execute();
+        setPriority(2);
+        getNewsData();
     }
 
     public List<Result> getNewsStories() {
@@ -48,61 +46,28 @@ public class TrendInfo extends CardInfo {
         }
     }
 
-//TODO: Switch back to Retrofit
-    public class AsyncNews extends AsyncTask<Void, Void, Void> {
+public void getNewsData(){
+
+    RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(NEWSWIRE_URL).build();
+
+    NYTapi nyt = restAdapter.create(NYTapi.class);
+
+    nyt.getFeed(new Callback<NYTModel>() {
+        @Override
+        public void success(NYTModel nytModel, Response response) {
+
+            newsStories = nytModel.getResults();
+            Log.d("retroSuccess", "URL: " + response.getUrl());
+
+        }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        public void failure(RetrofitError error) {
+            Log.d("retroFAIL", "URL: " + error.getUrl() + "||| Error: " + error.toString());
 
-            String newsUrl = "http://api.nytimes.com/svc/news/v3/content/nyt/all/24?api-key=1fb09ee32a69fd6c40f98e7e38f6b0a4:6:72391617";
-            List<Result> newsList = new ArrayList<>();
-
-            //TODO: JSON response doesn't provide proper punctuation. Ex. Instead of a apostrophe, it will return &#82343(etc.). Might be able to fix before saving to string.
-            try {
-                URL url = new URL(newsUrl);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
-                String output = readStream(connection.getInputStream());
-
-                JSONObject fullWebPage = new JSONObject(output);
-                JSONArray arr = fullWebPage.getJSONArray("results");
-
-                for (int i = 0; i < arr.length(); i++) {
-                    Result result = new Result();
-
-                    JSONObject arr2 = arr.getJSONObject(i);
-
-                    result.setSection(arr2.getString("section"));
-                    result.setTitle(arr2.getString("title"));
-                    result.setAbstract(arr2.getString("abstract"));
-                    result.setUrl(arr2.getString("url"));
-                    result.setThumbnailStandard(arr2.getString("thumbnail_standard"));
-
-//                    newsStories.add(result);
-
-                    newsList.add(result);
-                }
-                newsStories = newsList;
-            } catch (Exception e) {
-                Log.d("json", "" + e.getMessage());
-            }
-
-            return null;
         }
-
-    }
-
-    private String readStream(InputStream in) throws IOException {
-        char[] buffer = new char[1024 * 4];
-        InputStreamReader reader = new InputStreamReader(in, "UTF8");
-        StringWriter writer = new StringWriter();
-        int n;
-        while ((n = reader.read(buffer)) != -1) {
-            writer.write(buffer, 0, n);
-        }
-        return writer.toString();
-    }
+    });
+}
 
     public void setFields(final CardAdapter.TrendingViewHolder trendingViewHolder, final Context context) {
         Runnable runnable = new Runnable() {
@@ -120,5 +85,4 @@ public class TrendInfo extends CardInfo {
         };
         new Handler().postDelayed(runnable,2000);
     }
-
 }

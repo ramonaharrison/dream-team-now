@@ -1,31 +1,53 @@
 package com.ramonaharrison.dev.dreamteamnow.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
-import java.util.List;
 
-/**
- * Created by kadeemmaragh on 6/27/15.
- */
+public class Result implements Serializable {
 
-public class Result implements Serializable{
-
+    @Expose
     private String section;
+    @Expose
     private String subsection;
+    @Expose
     private String title;
+    @SerializedName("abstract")
+    @Expose
     private String _abstract;
+    @Expose
     private String url;
+    @Expose
     private String byline;
+    @SerializedName("thumbnail_standard")
+    @Expose
     private String thumbnailStandard;
+    @SerializedName("item_type")
+    @Expose
     private String itemType;
+    @Expose
     private String source;
+    @SerializedName("updated_date")
+    @Expose
     private String updatedDate;
+    @SerializedName("created_date")
+    @Expose
     private String createdDate;
+    @SerializedName("published_date")
+    @Expose
     private String publishedDate;
+    @SerializedName("material_type_facet")
+    @Expose
     private String materialTypeFacet;
+    @Expose
     private String kicker;
+    @Expose
     private String subheadline;
-    private String geoFacet;
-    private List multimedia;
+    @Expose
+    private Object relatedUrls;
+//    @Expose
+//    private List<Multimedium> multimedia = new ArrayList<Multimedium>();
 
     /**
      *
@@ -297,23 +319,22 @@ public class Result implements Serializable{
         this.subheadline = subheadline;
     }
 
-
     /**
      *
      * @return
-     * The geoFacet
+     * The relatedUrls
      */
-    public String getGeoFacet() {
-        return geoFacet;
+    public Object getRelatedUrls() {
+        return relatedUrls;
     }
 
     /**
      *
-     * @param geoFacet
-     * The geo_facet
+     * @param relatedUrls
+     * The related_urls
      */
-    public void setGeoFacet(String geoFacet) {
-        this.geoFacet = geoFacet;
+    public void setRelatedUrls(Object relatedUrls) {
+        this.relatedUrls = relatedUrls;
     }
 
     /**
@@ -321,17 +342,23 @@ public class Result implements Serializable{
      * @return
      * The multimedia
      */
-    public List getMultimedia() {
-        return multimedia;
-    }
+//    public List<Multimedium> getMultimedia() {
+//        return multimedia;
+//    }
 
     /**
      *
      * @param multimedia
      * The multimedia
      */
-    public void setMultimedia(List multimedia) {
-        this.multimedia = multimedia;
-    }
+//    public void setMultimedia(List<Multimedium> multimedia) {
+//        this.multimedia = multimedia;
+//    }
+//
+//    public void setMultimedia(String multimedia){
+//        Multimedium empty = new Multimedium();
+//        empty.setUrl("");
+//        this.multimedia.add(empty);
+//    }
 
 }
