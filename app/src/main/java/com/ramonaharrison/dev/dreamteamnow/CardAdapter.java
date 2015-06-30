@@ -61,6 +61,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         protected CardView weatherCard;
         protected TextView location;
+        protected TextView city;
         protected TextView condition;
         protected TextView wind;
         protected TextView humidity;
@@ -70,6 +71,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public WeatherViewHolder(View v) {
             super(v);
             weatherCard = (CardView) v.findViewById(R.id.weather_card_view);
+            city = (TextView) v.findViewById(R.id.city);
             location = (TextView) v.findViewById(R.id.location);
             condition = (TextView) v.findViewById(R.id.condition);
             wind = (TextView) v.findViewById(R.id.wind);

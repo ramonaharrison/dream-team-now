@@ -31,11 +31,14 @@ public class MainActivity extends Activity {
     private void initializeCards() {
         //TODO: add your cards to the deck here
         cards = new ArrayList<>();
+        initializeWeather();
         initializeTodo();
-        cards.add(new WeatherInfo(getApplicationContext()));
-        cards.add(new WeatherInfo(getApplicationContext()));
         sortCardList(cards);
 
+    }
+
+    private void initializeWeather() {
+        cards.add(new WeatherInfo(getApplicationContext()));
     }
 
     private void initializeTodo() {

@@ -3,7 +3,6 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.LocationManager;
-import android.os.Handler;
 import android.util.Log;
 
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.CurrentObservation;
@@ -31,15 +30,18 @@ import retrofit.client.Response;
 /**
  * Created by c4q-anthonyf on 6/23/15.
  */
+
+    //TODO: Feature: add new weather cards based on city
+    //TODO: 4 day forecast
+
 public class WeatherInfo extends CardInfo {
     private final Context context;
-    private static final String API_KEY = "8e05118212e07ce3";
+    private static final String OWM_KEY = "8e05118212e07ce3";
     private static final String WEATHER_LAST_LOCATION = "weather_last_location.txt";
-    private static final String ENDPOINT = "http://api.wunderground.com/api/" + API_KEY;
-    private static final String GEOLOOKUP = "/geolookup/q/";
-    private static final String FORECAST = "/forecast/q/";
-    private static final String CONDITIONS = "/conditions/q/";
-    private String requestURL;
+    private static final String GEOENDPOINT = "http://api.wunderground.com/api/" + OWM_KEY;
+    public static final String GEOLOOKUP = "/geolookup/q/";
+    public static final String FORECAST = "/forecast/q/";
+    public static final String CONDITIONS = "/conditions/q/";
 
     //location data
     private double longitude;
@@ -67,10 +69,18 @@ public class WeatherInfo extends CardInfo {
     private String[] condition;
     private String[] icon_urls;
 
+    //data booleans
+    private boolean conditionsComplete;
+    private boolean locationComplete;
+    private boolean forecastComplete;
+
     public WeatherInfo(Context context) {
         this.context = context.getApplicationContext();
         setType("weather");
         isMetric = false;
+        conditionsComplete = false;
+        locationComplete = false;
+        forecastComplete = false;
         setPriority(1);
         android.location.Location weather = getLocation();
         setLatLon(weather);
@@ -82,7 +92,7 @@ public class WeatherInfo extends CardInfo {
 
     private void retrofitWeatherConditions() {
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(ENDPOINT)
+                .setEndpoint(GEOENDPOINT)
                 .build();
 
         WeatherConditionsAPI weatherConditionsAPI = restAdapter.create(WeatherConditionsAPI.class);
@@ -93,12 +103,12 @@ public class WeatherInfo extends CardInfo {
             public void success(WeatherConditions weatherConditions, Response response) {
                 CurrentObservation cObs = weatherConditions.getCurrentObservation();
 
-                tempC = cObs.getTempC() + "°";
-                tempF = cObs.getTempF() + "°";
+                tempC = cObs.getTempC().intValue() + "°";
+                tempF = cObs.getTempF().intValue() + "°";
                 weather = cObs.getWeather();
                 humidity = cObs.getRelativeHumidity();
-                windMPH = cObs.getWindMph() + "mph";
-                windKPH = cObs.getWindKph() + "kph";
+                windMPH = cObs.getWindMph().intValue() + " mph";
+                windKPH = cObs.getWindKph().intValue() + " kph";
                 conditionIconURL = cObs.getIconUrl();
                 Log.d("Retrofit","Weather Conditions: Success");
             }
@@ -112,7 +122,7 @@ public class WeatherInfo extends CardInfo {
 
     private void retrofitWeatherLocation() {
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(ENDPOINT)
+                .setEndpoint(GEOENDPOINT)
                 .build();
 
         WeatherLocationAPI weatherLocationAPI = restAdapter.create(WeatherLocationAPI.class);
@@ -128,9 +138,6 @@ public class WeatherInfo extends CardInfo {
                 state = location.getState();
                 city = location.getCity();
                 zip = location.getZip();
-                requestURL = location.getRequesturl();
-                requestURL = requestURL.replace(".html",".json");
-                Log.d("REQUESTURL",requestURL + "");
                 Log.d("RetroFit!","Success");
                 retrofitWeatherConditions();
             }
@@ -155,6 +162,10 @@ public class WeatherInfo extends CardInfo {
         return lm.getLastKnownLocation(lm.getBestProvider(criteria, true));
     }
 
+    /*
+    sets Latitude and Longitude mVariables using Location
+    if location is unavailable, gets previously saved location
+     */
     private void setLatLon(android.location.Location location){
         if(location != null) {
             longitude = location.getLongitude();
@@ -206,24 +217,25 @@ public class WeatherInfo extends CardInfo {
     }
 
     public void bindViews(final CardAdapter.WeatherViewHolder weatherViewHolder){
-        Runnable runnable = new Runnable() {
-            CardAdapter.WeatherViewHolder wvh = weatherViewHolder;
-            @Override
-            public void run() {
+
                 Log.d("Adapter","Binding Weather Card");
-                wvh.location.setText(city + ", " + state + ", " + country + ", " + zip);
-                wvh.condition.setText(weather);
-                wvh.humidity.setText("Percip " + humidity);
+                weatherViewHolder.city.setText(city);
+                weatherViewHolder.location.setText(state + " " + country + " " + zip);
+                weatherViewHolder.condition.setText(weather);
+                weatherViewHolder.humidity.setText("Percip " + humidity);
                 if (isMetric) {
-                    wvh.temp.setText(tempC);
-                    wvh.wind.setText("Wind " + windMPH);
+                    weatherViewHolder.temp.setText(tempC);
+                    weatherViewHolder.wind.setText("Wind " + windKPH);
                 } else {
-                    wvh.temp.setText(tempF);
-                    wvh.wind.setText("Wind " + windMPH);
+                    weatherViewHolder.temp.setText(tempF);
+                    weatherViewHolder.wind.setText("Wind " + windMPH);
                 }
-                Picasso.with(wvh.weatherCard.getContext()).load(conditionIconURL).centerCrop().resize(200, 200).into(wvh.conditionImage);
-            }
-        };
-            new Handler().post(runnable);
+                Picasso.with(weatherViewHolder.weatherCard.getContext()).load(conditionIconURL).centerCrop().resize(250,250).into(weatherViewHolder.conditionImage);
+
     }
+
+    public boolean dataIsReady(){
+        return conditionsComplete & forecastComplete & locationComplete;
+    }
+
 }

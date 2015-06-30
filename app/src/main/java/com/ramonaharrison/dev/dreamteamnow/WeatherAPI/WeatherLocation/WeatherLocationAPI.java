@@ -1,5 +1,7 @@
 package com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation;
 
+import com.ramonaharrison.dev.dreamteamnow.WeatherInfo;
+
 import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Path;
@@ -9,7 +11,7 @@ import retrofit.http.Path;
  */
 public interface WeatherLocationAPI {
 
-    @GET("/geolookup/q/{lat},{lon}.json")
+    @GET(WeatherInfo.GEOLOOKUP + "{lat},{lon}.json")
     public void getFeed(@Path("lat") Double lat, @Path("lon") Double lon, Callback<WeatherLocation> response);
 
 }
