@@ -284,7 +284,7 @@ public class WeatherInfo extends CardInfo {
             }
         };
 
-        new Handler().postDelayed(bindViews,500);
+        new Handler().postDelayed(bindViews,2000);
 
     }
 

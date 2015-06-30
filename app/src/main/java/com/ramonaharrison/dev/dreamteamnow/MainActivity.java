@@ -1,38 +1,73 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
-import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.ramonaharrison.dev.dreamteamnow.db.SQLController;
+
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, PopupMenu.OnMenuItemClickListener, ConnectionCallbacks, OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
     private RecyclerView recyclerView;
+    private CoordinatorLayout mainContent;
     private List<CardInfo> cards;
-    private Calendar calendar;
-
+    private SQLController dbController;
+    private GoogleApiClient mGoogleApiClient;
+    private CardAdapter cAdapter;
+    private LocationRequest mLocationRequest;
+    private Location mCurrentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        buildGoogleApiClient();
         setContentView(R.layout.activity_main);
+        mainContent = (CoordinatorLayout) findViewById(R.id.main_content);
         initializeRecyclerView();
         initializeCards();
         setAdapter();
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        if (mCurrentLocation != null) {
+            createLocationRequest();
+            startLocationUpdates();
+            initializeMap();
+        } else {
+
+        }
+    }
+
     private void initializeCards() {
         //TODO: add your cards to the deck here
-        cards = new ArrayList<>();
-        initializeWeather();
+        cards = new ArrayList<CardInfo>();
         initializeTodo();
+        initializeWeather();
         sortCardList(cards);
 
     }
@@ -41,12 +76,20 @@ public class MainActivity extends Activity {
         cards.add(new WeatherInfo(getApplicationContext()));
     }
 
-    private void initializeTodo() {
-        calendar = Calendar.getInstance();
-        for (int i = 0; i < 10; i++) {
-            TodoInfo todo = new TodoInfo("Sample", "This is the description", calendar, true, 30);
-            cards.add(todo);
-        }
+    private void initializeMap() {
+        MapInfo mapInfo = new MapInfo("Your Location", mCurrentLocation);
+        cards.add(mapInfo);
+        setAdapter();
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        mGoogleApiClient.connect();
     }
 
     private void initializeRecyclerView() {
@@ -58,14 +101,63 @@ public class MainActivity extends Activity {
     }
 
     private void setAdapter() {
-        CardAdapter cAdapter = new CardAdapter(cards, getApplicationContext());
+        cAdapter = new CardAdapter(cards, getApplicationContext());
         recyclerView.setAdapter(cAdapter);
+    }
+
+    public void createTodo() {
+        Intent intent = new Intent(this, TodoActivity.class);
+        startActivity(intent);
+    }
+
+    private void initializeTodo() {
+        dbController = new SQLController(this);
+        dbController.open();
+        Cursor cursor = dbController.fetch();
+
+        int idIndex = cursor.getColumnIndexOrThrow("_id");
+        int nameIndex = cursor.getColumnIndexOrThrow("name");
+        int descriptionIndex = cursor.getColumnIndexOrThrow("description");
+        int locationIndex = cursor.getColumnIndexOrThrow("location");
+        int dayIndex = cursor.getColumnIndexOrThrow("day");
+        int monthIndex = cursor.getColumnIndexOrThrow("month");
+        int yearIndex = cursor.getColumnIndexOrThrow("year");
+        int hourIndex = cursor.getColumnIndexOrThrow("hour");
+        int minuteIndex = cursor.getColumnIndexOrThrow("minute");
+        int reminderIndex = cursor.getColumnIndexOrThrow("reminder");
+        int minBeforeIndex = cursor.getColumnIndexOrThrow("minbefore");
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            try {
+                long id = cursor.getLong(idIndex);
+                String name = cursor.getString(nameIndex);
+                String description = cursor.getString(descriptionIndex);
+                String location = cursor.getString(locationIndex);
+                int day = cursor.getInt(dayIndex);
+                int month = cursor.getInt(monthIndex);
+                int year = cursor.getInt(yearIndex);
+                int hour = cursor.getInt(hourIndex);
+                int minute = cursor.getInt(minuteIndex);
+                int reminder = cursor.getInt(reminderIndex);
+                int minBefore = cursor.getInt(minBeforeIndex);
+
+                TodoInfo newTodo = new TodoInfo(id, name, description, location, day, month, year, hour, minute, reminder, minBefore);
+                cards.add(newTodo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            cursor.moveToNext();
+        }
+        cursor.close();
+        dbController.close();
     }
 
     public void showPopup(View v) {
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.popup_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(this);
         popup.show();
     }
 
@@ -85,6 +177,76 @@ public class MainActivity extends Activity {
                 CardInfo cardInfo = cards.remove(i);
                 cards.add(i-(j-1),cardInfo);
             }
+        }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.new_todo:
+                createTodo();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(0, 0))
+                .title("Marker"));
+        googleMap.setMyLocationEnabled(true);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
+        updateMap();
+    }
+
+    private void updateMap() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mGoogleApiClient.isConnected()) {
+            startLocationUpdates();
         }
     }
 
