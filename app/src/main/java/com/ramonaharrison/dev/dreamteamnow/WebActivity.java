@@ -15,10 +15,12 @@ public class WebActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
 
+
+        String url = getIntent().getExtras().getString("url");
+        
         myWebView = (WebView) findViewById(R.id.webview);
-        String google = "http://www.google.com";
         myWebView.setWebViewClient(new WebViewClient());
-        myWebView.loadUrl(google);
+        myWebView.loadUrl(url);
 
     }
 

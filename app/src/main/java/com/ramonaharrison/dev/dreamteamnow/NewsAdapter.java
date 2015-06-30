@@ -27,7 +27,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.context = context;
     }
 
-    public class NewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class NewsViewHolder extends RecyclerView.ViewHolder {
 
         protected TextView storyTitle, storyDescription, storyTime;
         protected ImageView storyImage;
@@ -35,18 +35,13 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public NewsViewHolder(View v) {
             super(v);
 
-            v.setOnClickListener(this);
+//            v.setOnClickListener(new CustomViewListener());
             storyTitle = (TextView) v.findViewById(R.id.newsStoryTitle);
             storyDescription = (TextView) v.findViewById(R.id.newsStoryDescription);
             storyTime = (TextView)v.findViewById(R.id.newsStoryTime);
             storyImage = (ImageView) v.findViewById(R.id.newsStoryImage);
         }
 
-        @Override
-        public void onClick(View v) {
-           Intent intent = new Intent(context, WebActivity.class);
-           context.startActivity(intent);
-        }
     }
 
     @Override
@@ -66,6 +61,8 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         newsViewHolder.storyTitle.setText(newsStory.getTitle());
         newsViewHolder.storyDescription.setText(newsStory.getAbstract());
         loadImage(context, newsStory.getThumbnailStandard(), newsViewHolder.storyImage);
+        newsViewHolder.itemView.setOnClickListener(new CustomViewListener(newsStory.getUrl()));
+
 
     }
 
@@ -85,6 +82,24 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return newsList.size();
     }
 
+
+public class CustomViewListener implements View.OnClickListener {
+
+    String url;
+    public CustomViewListener(String url){
+
+        this.url = url;
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        Intent intent = new Intent(context, WebActivity.class);
+        intent.putExtra("url", url);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+}
 
 
 }
