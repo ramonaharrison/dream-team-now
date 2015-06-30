@@ -31,7 +31,14 @@ public class MainActivity extends Activity {
     private void initializeCards() {
         //TODO: add your cards to the deck here
         cards = new ArrayList<>();
+        initializeWeather();
         initializeTodo();
+        sortCardList(cards);
+
+    }
+
+    private void initializeWeather() {
+        cards.add(new WeatherInfo(getApplicationContext()));
     }
 
     private void initializeTodo() {
@@ -60,6 +67,25 @@ public class MainActivity extends Activity {
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.popup_menu, popup.getMenu());
         popup.show();
+    }
+
+    //uses insertion sort algorithm to sort cards based on priority
+    public void sortCardList(List<CardInfo> cardList){
+        for(int i = 1; i < cardList.size(); i++){
+            int currentPriority = cardList.get(i).getPriority();
+            int previousPriority = cardList.get(i-1).getPriority();
+            if(currentPriority < previousPriority){
+                int j = 1;
+                for(;i-j >= 0; j++){
+                    int priorityToCheck = cards.get(i-j).getPriority();
+                    if(!(currentPriority < priorityToCheck)){
+                        break;
+                    }
+                }
+                CardInfo cardInfo = cards.remove(i);
+                cards.add(i-(j-1),cardInfo);
+            }
+        }
     }
 
 }

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // TODO: add an int value for each card type
     private final int TODO = 1;
+    final int WEATHER = 2;
 
     public CardAdapter(List<CardInfo> cardList, Context context) {
         this.cardList = cardList;
@@ -55,27 +57,57 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public class WeatherViewHolder extends RecyclerView.ViewHolder {
+
+        protected CardView weatherCard;
+        protected TextView location;
+        protected TextView city;
+        protected TextView condition;
+        protected TextView wind;
+        protected TextView humidity;
+        protected ImageView conditionImage;
+        protected TextView temp;
+
+        public WeatherViewHolder(View v) {
+            super(v);
+            weatherCard = (CardView) v.findViewById(R.id.weather_card_view);
+            city = (TextView) v.findViewById(R.id.city);
+            location = (TextView) v.findViewById(R.id.location);
+            condition = (TextView) v.findViewById(R.id.condition);
+            wind = (TextView) v.findViewById(R.id.wind);
+            humidity = (TextView) v.findViewById(R.id.humidity);
+            conditionImage = (ImageView) v.findViewById(R.id.condition_image);
+            temp = (TextView) v.findViewById(R.id.temp);
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
-
         // TODO: add an if statement/int value for each card type
-        if (cardList.get(position).getType().equals("todo")) {
+        if(cardList.get(position).getType().equals("todo")){
             return TODO;
+        }else if(cardList.get(position).getType().equals("weather")){
+            return WEATHER;
         }
+
         return 0;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
          // TODO: add an if statement for each card type
-
          if (viewType == TODO) {
              View itemView = LayoutInflater.
                      from(parent.getContext()).
                      inflate(R.layout.todo_card, parent, false);
 
              return new TodoViewHolder(itemView);
+         }else if(viewType == WEATHER){
+             View itemView = LayoutInflater.
+                     from(parent.getContext()).
+                     inflate(R.layout.weather_card, parent, false);
+
+             return new WeatherViewHolder(itemView);
          }
 
         return null;
@@ -83,9 +115,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-
         // TODO: add an if statement for each card type
-
         if (viewHolder.getItemViewType() == TODO) {
             TodoInfo todo = (TodoInfo) cardList.get(position);
             TodoViewHolder todoViewHolder = (TodoViewHolder) viewHolder;
@@ -95,6 +125,11 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             todoViewHolder.location.setText(todo.getWhereString());
             todoViewHolder.minutesBefore.setText(todo.getMinutesBeforeString());
             setAnimation(todoViewHolder.todoCard, position);
+        }else if (viewHolder.getItemViewType() == WEATHER) {
+            WeatherInfo weather = (WeatherInfo) cardList.get(position);
+            WeatherViewHolder weatherViewHolder = (WeatherViewHolder) viewHolder;
+            weather.bindViews(weatherViewHolder);
+            setAnimation(weatherViewHolder.weatherCard, position);
         }
     }
 
