@@ -2,6 +2,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -126,7 +127,11 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             TodoInfo todo = (TodoInfo) cardList.get(position);
             TodoViewHolder todoViewHolder = (TodoViewHolder) viewHolder;
             todoViewHolder.name.setText(todo.getName());
-            todoViewHolder.time.setText(todo.getTimeString());
+
+            if (!todo.getTimeString().contains("-1")) {
+                todoViewHolder.time.setText(todo.getTimeString());
+            }
+
             todoViewHolder.location.setText(todo.getLocationString());
             todoViewHolder.minutesBefore.setText(todo.getMinutesBeforeString());
 
@@ -162,10 +167,15 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             MapViewHolder mapViewHolder = (MapViewHolder) viewHolder;
             MapInfo map = (MapInfo) cardList.get(position);
             mapViewHolder.name.setText(map.getName());
+            final double lat = map.getLatitude();
+            final double lon = map.getLongitude();
+
             mapViewHolder.openMaps.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                            Uri.parse("http://maps.google.com/maps"));
+                    v.getContext().startActivity(intent);
                 }
             });
 

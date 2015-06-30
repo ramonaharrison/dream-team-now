@@ -46,7 +46,7 @@
             <Button
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:background="@drawable/ic_edit_white_24dp"
+                android:background="@drawable/ic_chevron_right_white_24dp"
                 android:id="@+id/map_edit_icon"
                 android:adjustViewBounds="false" />
 
@@ -63,7 +63,7 @@
                 android:id="@+id/map"
                 android:layout_width="fill_parent"
                 android:layout_height="300dp"
-                map:cameraZoom="13"
+                map:cameraZoom="12"
                 map:mapType="normal"
                 map:liteMode="true"/>
 

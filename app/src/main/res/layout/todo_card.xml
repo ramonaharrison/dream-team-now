@@ -77,14 +77,12 @@
                     android:id="@+id/location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1234 Example Address"
                     android:textSize="@dimen/abc_text_size_caption_material"/>
 
                 <TextView
                     android:id="@+id/time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="June 22 at 1:30 PM"
                     android:textSize="@dimen/abc_text_size_caption_material"/>
 
 
@@ -103,10 +101,9 @@
 
                     <TextView
                         android:id="@+id/minutes_before"
-                        android:layout_width="wrap_content"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="4dp"
-                        android:text="30 minutes before"
                         android:textSize="@dimen/abc_text_size_caption_material"/>
                 </LinearLayout>
 
