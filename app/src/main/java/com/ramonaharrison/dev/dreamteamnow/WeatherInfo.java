@@ -5,9 +5,11 @@ import android.location.Criteria;
 import android.location.LocationManager;
 import android.util.Log;
 
-import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.CurrentObservation;
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.Currently;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.WeatherConditions;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.WeatherConditionsAPI;
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherIcon.WeatherIcon;
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherIcon.WeatherIconAPI;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.Location;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.WeatherLocation;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.WeatherLocationAPI;
@@ -32,16 +34,23 @@ import retrofit.client.Response;
  */
 
     //TODO: Feature: add new weather cards based on city
-    //TODO: 4 day forecast
+    //TODO: 5 day forecast
+    //TODO: use cache to store previously searched location info as to not query API as often
 
 public class WeatherInfo extends CardInfo {
     private final Context context;
     private static final String OWM_KEY = "8e05118212e07ce3";
     private static final String WEATHER_LAST_LOCATION = "weather_last_location.txt";
-    private static final String GEOENDPOINT = "http://api.wunderground.com/api/" + OWM_KEY;
+    private static final String GEO_ENDPOINT = "http://api.wunderground.com/api/" + OWM_KEY;
     public static final String GEOLOOKUP = "/geolookup/q/";
-    public static final String FORECAST = "/forecast/q/";
     public static final String CONDITIONS = "/conditions/q/";
+
+    public static final String FC_KEY = "23df8d08609dc3723424be5528a791f6";
+    public static final String FORECAST_EP = "https://api.forecast.io/forecast/" + FC_KEY;
+
+    private static final String ICONSEARCH_EP = "https://ajax.googleapis.com/ajax/services/search";
+    private static final String ICONSEARCH_APPEND = "iconarchive.com%20weather%20icon.png";
+
 
     //location data
     private double longitude;
@@ -59,6 +68,7 @@ public class WeatherInfo extends CardInfo {
     private String windMPH;
     private String windKPH;
     private String conditionIconURL;
+    private String summaryIconName;
     private boolean isMetric;
 
     //data for 4 day forecast
@@ -66,13 +76,14 @@ public class WeatherInfo extends CardInfo {
     private String[] highC;
     private String[] lowF;
     private String[] lowC;
-    private String[] condition;
+    private String[] summaries;
+    private String[] icon_summaries;
     private String[] icon_urls;
 
     //data booleans
     private boolean conditionsComplete;
     private boolean locationComplete;
-    private boolean forecastComplete;
+    private boolean iconComplete;
 
     public WeatherInfo(Context context) {
         this.context = context.getApplicationContext();
@@ -80,7 +91,7 @@ public class WeatherInfo extends CardInfo {
         isMetric = false;
         conditionsComplete = false;
         locationComplete = false;
-        forecastComplete = false;
+        iconComplete = false;
         setPriority(1);
         android.location.Location weather = getLocation();
         setLatLon(weather);
@@ -90,31 +101,64 @@ public class WeatherInfo extends CardInfo {
         retrofitWeatherLocation();
     }
 
+    private void retrofitIconSearch() {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(ICONSEARCH_EP)
+                .build();
+
+        WeatherIconAPI weatherIconAPI = restAdapter.create(WeatherIconAPI.class);
+
+
+        Log.d("SummaryIconName", summaryIconName + "");
+        weatherIconAPI.getFeed(summaryIconName.replaceAll("-","%20") + ICONSEARCH_APPEND, new Callback<WeatherIcon>() {
+
+            @Override
+            public void success(WeatherIcon weatherIcon, Response response) {
+                try {
+                    conditionIconURL = weatherIcon.getResponseData().getResults().get(0).getUrl();
+                }catch(IndexOutOfBoundsException e){
+                    Log.d("Retrofit: Weather Icon ", "No Search Results found");
+                }
+                iconComplete = true;
+                Log.d("Retrofit", "Weather Icon Search: Success");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                iconComplete = true;
+                Log.d("Retrofit", "Weather Icon Search: FAILED");
+            }
+        });
+    }
+
     private void retrofitWeatherConditions() {
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(GEOENDPOINT)
+                .setEndpoint(FORECAST_EP)
                 .build();
 
         WeatherConditionsAPI weatherConditionsAPI = restAdapter.create(WeatherConditionsAPI.class);
 
-        weatherConditionsAPI.getFeed(country.replace(" ","_"), state.replace(" ", "_"), city.replace(" ","_"), new Callback<WeatherConditions>() {
+        weatherConditionsAPI.getFeed(latitude, longitude, new Callback<WeatherConditions>() {
 
             @Override
             public void success(WeatherConditions weatherConditions, Response response) {
-                CurrentObservation cObs = weatherConditions.getCurrentObservation();
+                Currently currently = weatherConditions.getCurrently();
 
-                tempC = cObs.getTempC().intValue() + "°";
-                tempF = cObs.getTempF().intValue() + "°";
-                weather = cObs.getWeather();
-                humidity = cObs.getRelativeHumidity();
-                windMPH = cObs.getWindMph().intValue() + " mph";
-                windKPH = cObs.getWindKph().intValue() + " kph";
-                conditionIconURL = cObs.getIconUrl();
+                tempC = ((int)((currently.getTemperature() - 32) * (5/9))) + "°";
+                tempF = currently.getTemperature().intValue() + "°";
+                weather = currently.getSummary();
+                humidity = ((int)(currently.getHumidity() * 100)) + "%";
+                windMPH = currently.getWindSpeed().intValue() + " mph";
+                windKPH = ((int)(currently.getWindSpeed() * 1.60934)) + " kph";
+                summaryIconName = currently.getIcon();
+                retrofitIconSearch();
+                conditionsComplete = true;
                 Log.d("Retrofit","Weather Conditions: Success");
             }
 
             @Override
             public void failure(RetrofitError error) {
+                conditionsComplete = true;
                 Log.d("Retrofit","Weather Conditions: FAILED");
             }
         });
@@ -122,7 +166,7 @@ public class WeatherInfo extends CardInfo {
 
     private void retrofitWeatherLocation() {
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(GEOENDPOINT)
+                .setEndpoint(GEO_ENDPOINT)
                 .build();
 
         WeatherLocationAPI weatherLocationAPI = restAdapter.create(WeatherLocationAPI.class);
@@ -140,10 +184,12 @@ public class WeatherInfo extends CardInfo {
                 zip = location.getZip();
                 Log.d("RetroFit!","Success");
                 retrofitWeatherConditions();
+                locationComplete = true;
             }
 
             @Override
             public void failure(RetrofitError error) {
+                locationComplete = true;
                 Log.d("RetroFit!","Failed");
             }
         });
@@ -235,7 +281,7 @@ public class WeatherInfo extends CardInfo {
     }
 
     public boolean dataIsReady(){
-        return conditionsComplete & forecastComplete & locationComplete;
+        return conditionsComplete & iconComplete & locationComplete;
     }
 
 }

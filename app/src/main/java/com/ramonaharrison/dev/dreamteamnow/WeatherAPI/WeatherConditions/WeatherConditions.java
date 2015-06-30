@@ -1,21 +1,18 @@
 package com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 public class WeatherConditions {
 
-    @SerializedName("current_observation")
     @Expose
-    private CurrentObservation currentObservation;
+    private Currently currently;
 
 
-    public CurrentObservation getCurrentObservation() {
-        return currentObservation;
+    public Currently getCurrently() {
+        return currently;
     }
 
-    public void setCurrentObservation(CurrentObservation currentObservation) {
-        this.currentObservation = currentObservation;
+    public void setCurrently(Currently currently) {
+        this.currently = currently;
     }
-
 }

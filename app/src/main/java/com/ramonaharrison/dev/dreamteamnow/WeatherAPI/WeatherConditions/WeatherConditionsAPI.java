@@ -11,11 +11,8 @@ import retrofit.http.Path;
  */
 public interface WeatherConditionsAPI {
 
-    @GET(WeatherInfo.CONDITIONS + "{country}/{state}/{city}.json")
-    public void getFeed(@Path("country") String country,
-            @Path("state") String state,
-            @Path("city") String city,
+    @GET("/{lat},{lon}")
+    public void getFeed(@Path("lat") double latitude,
+            @Path("lon") double longitude,
             Callback<WeatherConditions> response);
-
-
 }
