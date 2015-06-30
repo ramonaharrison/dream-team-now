@@ -213,7 +213,7 @@ public class WeatherInfo extends CardInfo {
                 Log.d("Adapter","Binding Weather Card");
                 wvh.location.setText(city + ", " + state + ", " + country + ", " + zip);
                 wvh.condition.setText(weather);
-                wvh.humidity.setText("Percip " + humidity + "%");
+                wvh.humidity.setText("Percip " + humidity);
                 if (isMetric) {
                     wvh.temp.setText(tempC);
                     wvh.wind.setText("Wind " + windMPH);
