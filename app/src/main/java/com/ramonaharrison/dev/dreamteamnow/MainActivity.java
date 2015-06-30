@@ -3,7 +3,6 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -27,18 +26,11 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initializeRecyclerView();
         initializeCards();
         setAdapter();
         setItemTouchHelper();
-
-        // FIXME: Temporary fix, This refresh should be handled in TrendInfo.
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                cAdapter.notifyItemChanged(findTrendCard());
-            }
-        },3000);
     }
 
     private void initializeCards() {
@@ -91,6 +83,7 @@ public class MainActivity extends Activity {
         popup.show();
     }
 
+    //onClick for more button
     public void moreNews(View v){
         Intent moreNewsIntent = new Intent(this, NewsActivity.class);
         TrendInfo info = (TrendInfo) cards.get(findTrendCard());
@@ -108,6 +101,5 @@ public class MainActivity extends Activity {
         }
         return -1;
     }
-
 
 }

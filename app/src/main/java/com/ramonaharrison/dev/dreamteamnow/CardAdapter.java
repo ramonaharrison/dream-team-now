@@ -139,16 +139,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         else if (viewHolder.getItemViewType() == TREND) {
             TrendInfo trendInfo = (TrendInfo) cardList.get(position);
             TrendingViewHolder trendViewHolder = (TrendingViewHolder) viewHolder;
-
-            trendViewHolder.section.setText(trendInfo.getNewsStories().get(0).getSection());
-            trendViewHolder.title.setText(trendInfo.getNewsStories().get(0).getTitle());
-            trendInfo.loadImage(context,trendViewHolder.thumbnail, 0);
-
-            trendViewHolder.section2.setText(trendInfo.getNewsStories().get(1).getSection());
-            trendViewHolder.title2.setText(trendInfo.getNewsStories().get(1).getTitle());
-            trendInfo.loadImage(context,trendViewHolder.thumbnail2, 1);
-
-            //Set thumbnail image here
+            trendInfo.setFields(trendViewHolder, context);
             setAnimation(trendViewHolder.trendCard, position);
         }
     }

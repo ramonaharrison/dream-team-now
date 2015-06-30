@@ -2,6 +2,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -28,41 +29,26 @@ public class TrendInfo extends CardInfo {
     List<Result> newsStories = new ArrayList<>();
 
 
-    public TrendInfo(){
+    public TrendInfo() {
 
         setType("trend");
-
-        Result res = new Result();
-        res.setTitle("THE WORLD IS BURNING");
-        res.setSection("USA");
-        newsStories.add(res);
-        newsStories.add(res);
-
         new AsyncNews().execute();
     }
 
-    // TODO: Refresh Trend Card on CardAdapter
-
-
-    public List<Result> getNewsStories(){
+    public List<Result> getNewsStories() {
         return newsStories;
     }
 
-    public void loadImage(Context context, ImageView imgView, int num){
+    public void loadImage(Context context, ImageView imgView, int num) {
         String url = getNewsStories().get(num).getThumbnailStandard();
-
-        try{
+        try {
             Picasso.with(context).load(url).into(imgView);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Picasso.with(context).load(R.drawable.img_unavailable).into(imgView);
-
         }
-
     }
 
 //TODO: Switch back to Retrofit
-
     public class AsyncNews extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -82,7 +68,7 @@ public class TrendInfo extends CardInfo {
                 JSONObject fullWebPage = new JSONObject(output);
                 JSONArray arr = fullWebPage.getJSONArray("results");
 
-                for (int i = 0; i < arr.length(); i++){
+                for (int i = 0; i < arr.length(); i++) {
                     Result result = new Result();
 
                     JSONObject arr2 = arr.getJSONObject(i);
@@ -98,8 +84,7 @@ public class TrendInfo extends CardInfo {
                     newsList.add(result);
                 }
                 newsStories = newsList;
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 Log.d("json", "" + e.getMessage());
             }
 
@@ -117,6 +102,23 @@ public class TrendInfo extends CardInfo {
             writer.write(buffer, 0, n);
         }
         return writer.toString();
+    }
+
+    public void setFields(final CardAdapter.TrendingViewHolder trendingViewHolder, final Context context) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                trendingViewHolder.section.setText(getNewsStories().get(0).getSection());
+                trendingViewHolder.title.setText(getNewsStories().get(0).getTitle());
+                loadImage(context, trendingViewHolder.thumbnail, 0);
+
+                trendingViewHolder.section2.setText(getNewsStories().get(1).getSection());
+                trendingViewHolder.title2.setText(getNewsStories().get(1).getTitle());
+                loadImage(context, trendingViewHolder.thumbnail2, 1);
+
+            }
+        };
+        new Handler().postDelayed(runnable,2000);
     }
 
 }
