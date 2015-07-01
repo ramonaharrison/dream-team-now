@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.ramonaharrison.dev.dreamteamnow.db.SQLController;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -38,16 +40,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private CardAdapter cAdapter;
     private LocationRequest mLocationRequest;
     private Location mCurrentLocation;
+    private Calendar calendar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        buildGoogleApiClient();
         setContentView(R.layout.activity_main);
+
+        buildGoogleApiClient();
         mainContent = (CoordinatorLayout) findViewById(R.id.main_content);
+
         initializeRecyclerView();
         initializeCards();
         setAdapter();
+        setItemTouchHelper();
     }
 
     @Override
@@ -66,6 +73,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private void initializeCards() {
         //TODO: add your cards to the deck here
         cards = new ArrayList<CardInfo>();
+        initializeTrend();
         initializeTodo();
         initializeWeather();
         sortCardList(cards);
@@ -79,7 +87,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private void initializeMap() {
         MapInfo mapInfo = new MapInfo("Your Location", mCurrentLocation);
         cards.add(mapInfo);
-        setAdapter();
+    }
+    private void initializeTrend(){
+        TrendInfo trend = new TrendInfo();
+        cards.add(trend);
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -103,6 +115,34 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private void setAdapter() {
         cAdapter = new CardAdapter(cards, getApplicationContext());
         recyclerView.setAdapter(cAdapter);
+
+    }
+
+    //ItemTouch Helper for swiping/dragging
+    public void setItemTouchHelper(){
+        ItemTouchHelper.Callback callback = new CustomItemTouchHelper(cAdapter);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
+    //onClick for more button
+    public void moreNews(View v){
+        Intent moreNewsIntent = new Intent(this, NewsActivity.class);
+        TrendInfo info = (TrendInfo) cards.get(findTrendCard());
+        moreNewsIntent.putExtra("news", (java.io.Serializable) info.getNewsStories());
+        startActivity(moreNewsIntent);
+        overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
+    }
+
+    public int findTrendCard(){
+
+        for(int i = 0; i < cards.size(); i++){
+            if(cards.get(i).getType() == "trend"){
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void createTodo() {
@@ -249,5 +289,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             startLocationUpdates();
         }
     }
+
 
 }
