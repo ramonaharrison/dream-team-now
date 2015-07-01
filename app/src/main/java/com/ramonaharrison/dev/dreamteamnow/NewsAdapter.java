@@ -35,7 +35,6 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public NewsViewHolder(View v) {
             super(v);
 
-//            v.setOnClickListener(new CustomViewListener());
             storyTitle = (TextView) v.findViewById(R.id.newsStoryTitle);
             storyDescription = (TextView) v.findViewById(R.id.newsStoryDescription);
             storyTime = (TextView)v.findViewById(R.id.newsStoryTime);

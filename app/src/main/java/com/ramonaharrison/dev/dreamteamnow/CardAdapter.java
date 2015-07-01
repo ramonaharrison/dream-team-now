@@ -10,11 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ramonaharrison.dev.dreamteamnow.db.SQLController;
@@ -131,8 +129,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             moreButton = (Button) v.findViewById(R.id.moreBtn);
             trendCard = (CardView) v.findViewById(R.id.trend_card_view);
         }
-
-
     }
 
     @Override
@@ -274,6 +270,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     *  -removeItem for swiping
     *  -moveItems for drag&drop
     */
+    //TODO: Remove item doesn't update the list anymore.
     public void removeItem(int position) {
         cardList.remove(position);
         notifyItemRemoved(position);

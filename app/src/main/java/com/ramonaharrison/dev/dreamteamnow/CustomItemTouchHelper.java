@@ -42,10 +42,7 @@ public class CustomItemTouchHelper extends ItemTouchHelper.Callback {
         if (source.getItemViewType() != target.getItemViewType()) {
             return false;
         }
-
-        // Notify the adapter of the move
-        mAdapter.moveItems(source.getAdapterPosition(), target.getAdapterPosition());
-        return true;
+        return false;
     }
 
     @Override

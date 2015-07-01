@@ -87,7 +87,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private void initializeMap() {
         MapInfo mapInfo = new MapInfo("Your Location", mCurrentLocation);
         cards.add(mapInfo);
-        setAdapter();
     }
     private void initializeTrend(){
         TrendInfo trend = new TrendInfo();
