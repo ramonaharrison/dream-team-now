@@ -3,6 +3,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.ramonaharrison.dev.dreamteamnow.NYTAPI.NYTModel;
@@ -81,6 +82,7 @@ public void getNewsData(){
                 trendingViewHolder.section2.setText(getNewsStories().get(1).getSection());
                 trendingViewHolder.title2.setText(getNewsStories().get(1).getTitle());
                 loadImage(context, trendingViewHolder.thumbnail2, 1);
+                trendingViewHolder.progress.setVisibility(View.GONE);
 
             }
         };
