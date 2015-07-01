@@ -12,4 +12,6 @@
     <string name="title_activity_todo">New Todo</string>
     <string name="minbefore">minutes before.</string>
     <string name="remind_me">Remind me</string>
+    <string name="title_activity_news">NewsActivity</string>
+    <string name="title_activity_web">WebActivity</string>
 </resources>

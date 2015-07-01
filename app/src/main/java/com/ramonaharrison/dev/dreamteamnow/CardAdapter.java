@@ -13,6 +13,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ramonaharrison.dev.dreamteamnow.db.SQLController;
@@ -33,11 +35,13 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int TODO = 1;
     final int WEATHER = 2;
     private final int MAP = 692;
+    private final int TREND = 11;
 
     public CardAdapter(List<CardInfo> cardList, Context context) {
         this.cardList = cardList;
         this.context = context;
     }
+
 
     @Override
     public int getItemCount() {
@@ -68,7 +72,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    // TODO: create a holder class for each card type
     public class MapViewHolder extends RecyclerView.ViewHolder {
         protected LinearLayout label;
         protected TextView name;
@@ -108,6 +111,30 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public class TrendingViewHolder extends RecyclerView.ViewHolder{
+
+        TextView title,section,title2,section2;
+        CardView trendCard;
+        ImageView thumbnail, thumbnail2;
+        Button moreButton;
+
+        public TrendingViewHolder(View v){
+            super(v);
+            title = (TextView) v.findViewById(R.id.newsTitle);
+            section = (TextView) v.findViewById(R.id.newsSection);
+            thumbnail = (ImageView) v.findViewById(R.id.newsThumbnail);
+
+            title2 = (TextView) v.findViewById(R.id.newsTitleSecond);
+            section2 = (TextView) v.findViewById(R.id.newsSectionSecond);
+            thumbnail2 = (ImageView) v.findViewById(R.id.newsThumbnailSecond);
+
+            moreButton = (Button) v.findViewById(R.id.moreBtn);
+            trendCard = (CardView) v.findViewById(R.id.trend_card_view);
+        }
+
+
+    }
+
     @Override
     public int getItemViewType(int position) {
         // TODO: add an if statement/int value for each card type
@@ -118,6 +145,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (cardList.get(position).getType().equals("map")) {
             return MAP;
         }
+        else if(cardList.get(position).getType().equals("trend"))
+            return TREND;
 
         return 0;
     }
@@ -137,6 +166,13 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                      inflate(R.layout.weather_card, parent, false);
 
              return new WeatherViewHolder(itemView);
+         }
+        else if(viewType == TREND){
+             View itemView = LayoutInflater.
+                     from(parent.getContext()).
+                     inflate(R.layout.trending_card, parent, false);
+
+             return new TrendingViewHolder(itemView);
          }
 
         if (viewType == MAP) {
@@ -217,6 +253,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             setAnimation(mapViewHolder.mapCard, position);
         }
+        else if (viewHolder.getItemViewType() == TREND) {
+            TrendInfo trendInfo = (TrendInfo) cardList.get(position);
+            TrendingViewHolder trendViewHolder = (TrendingViewHolder) viewHolder;
+            trendInfo.setFields(trendViewHolder, context);
+            setAnimation(trendViewHolder.trendCard, position);
+        }
     }
 
     private void setAnimation(View viewToAnimate, int position) {
@@ -226,6 +268,23 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
         }
+    }
+
+    /* Methods for ItemTouchHelper.
+    *  -removeItem for swiping
+    *  -moveItems for drag&drop
+    */
+    public void removeItem(int position) {
+        cardList.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void moveItems(int startPos, int currentPos){
+        CardInfo hold = cardList.get(startPos);
+        cardList.remove(startPos);
+        cardList.add(currentPos,hold);
+        notifyItemMoved(startPos, currentPos);
+
     }
 
  }
