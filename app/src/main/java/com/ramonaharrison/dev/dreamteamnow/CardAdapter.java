@@ -2,6 +2,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.support.v7.internal.view.menu.MenuView;
 import android.support.v7.widget.CardView;
@@ -108,6 +109,28 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         protected ImageView conditionImage;
         protected TextView temp;
 
+        protected TextView day1;
+        protected TextView day2;
+        protected TextView day3;
+        protected TextView day4;
+        protected TextView day5;
+        protected ImageView condition1;
+        protected ImageView condition2;
+        protected ImageView condition3;
+        protected ImageView condition4;
+        protected ImageView condition5;
+        protected TextView maxTemp1;
+        protected TextView maxTemp2;
+        protected TextView maxTemp3;
+        protected TextView maxTemp4;
+        protected TextView maxTemp5;
+        protected TextView minTemp1;
+        protected TextView minTemp2;
+        protected TextView minTemp3;
+        protected TextView minTemp4;
+        protected TextView minTemp5;
+
+
         public WeatherViewHolder(View v) {
             super(v);
             weatherCard = (CardView) v.findViewById(R.id.weather_card_view);
@@ -118,6 +141,28 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             humidity = (TextView) v.findViewById(R.id.humidity);
             conditionImage = (ImageView) v.findViewById(R.id.condition_image);
             temp = (TextView) v.findViewById(R.id.temp);
+
+            day1 = (TextView) v.findViewById(R.id.day1);
+            day2 = (TextView) v.findViewById(R.id.day2);
+            day3 = (TextView) v.findViewById(R.id.day3);
+            day4 = (TextView) v.findViewById(R.id.day4);
+            day5 = (TextView) v.findViewById(R.id.day5);
+            condition1 = (ImageView) v.findViewById(R.id.condition1);
+            condition2 = (ImageView) v.findViewById(R.id.condition2);
+            condition3 = (ImageView) v.findViewById(R.id.condition3);
+            condition4 = (ImageView) v.findViewById(R.id.condition4);
+            condition5 = (ImageView) v.findViewById(R.id.condition5);
+            maxTemp1 = (TextView) v.findViewById(R.id.max_temp1);
+            maxTemp2 = (TextView) v.findViewById(R.id.max_temp2);
+            maxTemp3 = (TextView) v.findViewById(R.id.max_temp3);
+            maxTemp4 = (TextView) v.findViewById(R.id.max_temp4);
+            maxTemp5 = (TextView) v.findViewById(R.id.max_temp5);
+            minTemp1 = (TextView) v.findViewById(R.id.min_temp1);
+            minTemp2 = (TextView) v.findViewById(R.id.min_temp2);
+            minTemp3 = (TextView) v.findViewById(R.id.min_temp3);
+            minTemp4 = (TextView) v.findViewById(R.id.min_temp4);
+            minTemp5 = (TextView) v.findViewById(R.id.min_temp5);
+
         }
     }
 
@@ -294,7 +339,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             setAnimation(trendViewHolder.trendCard, position);
         }else if(viewHolder.getItemViewType() == HEADER) {
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
-            headerViewHolder.title.setImageResource(R.drawable.title);
+            headerViewHolder.title.setImageResource(R.drawable.header);
             setAnimation(headerViewHolder.header, position);
         }
     }
