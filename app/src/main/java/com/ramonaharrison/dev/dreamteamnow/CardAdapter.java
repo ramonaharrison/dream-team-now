@@ -2,9 +2,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.net.Uri;
-import android.support.v7.internal.view.menu.MenuView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -44,7 +42,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.cardList = cardList;
         this.context = context;
 
-        cardList.add(0,new HeaderCard());
+        cardList.add(0,new HeaderInfo());
 
     }
 
@@ -338,8 +336,22 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             trendInfo.setFields(trendViewHolder, context);
             setAnimation(trendViewHolder.trendCard, position);
         }else if(viewHolder.getItemViewType() == HEADER) {
+            HeaderInfo headerInfo = (HeaderInfo) cardList.get(position);
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
-            headerViewHolder.title.setImageResource(R.drawable.header);
+
+            switch(headerInfo.timeOfDay()){
+                case "day":
+                    headerViewHolder.title.setImageResource(R.drawable.header_day);
+                    break;
+                case "midday":
+                    headerViewHolder.title.setImageResource(R.drawable.header_midday);
+                    break;
+                case "night":
+                    headerViewHolder.title.setImageResource(R.drawable.header_night);
+                    break;
+                default:
+                    headerViewHolder.title.setImageResource(R.drawable.header_day);
+            }
             setAnimation(headerViewHolder.header, position);
         }
     }
