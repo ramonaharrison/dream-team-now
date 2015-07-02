@@ -3,7 +3,6 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.internal.view.menu.MenuView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +13,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ramonaharrison.dev.dreamteamnow.db.SQLController;
@@ -123,6 +123,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         CardView trendCard;
         ImageView thumbnail, thumbnail2;
         Button moreButton;
+        ProgressBar progress;
 
         public TrendingViewHolder(View v){
             super(v);
@@ -134,6 +135,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             section2 = (TextView) v.findViewById(R.id.newsSectionSecond);
             thumbnail2 = (ImageView) v.findViewById(R.id.newsThumbnailSecond);
 
+            progress = (ProgressBar) v.findViewById(R.id.progressBarTrend);
             moreButton = (Button) v.findViewById(R.id.moreBtn);
             trendCard = (CardView) v.findViewById(R.id.trend_card_view);
         }
@@ -266,6 +268,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         else if (viewHolder.getItemViewType() == TREND) {
             TrendInfo trendInfo = (TrendInfo) cardList.get(position);
             TrendingViewHolder trendViewHolder = (TrendingViewHolder) viewHolder;
+            trendViewHolder.progress.setVisibility(View.VISIBLE);
+
             trendInfo.setFields(trendViewHolder, context);
             setAnimation(trendViewHolder.trendCard, position);
         }

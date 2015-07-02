@@ -21,7 +21,7 @@ public class CustomItemTouchHelper extends ItemTouchHelper.Callback {
 
     @Override
     public boolean isLongPressDragEnabled() {
-        return true;
+        return false;
     }
 
     @Override
@@ -31,9 +31,9 @@ public class CustomItemTouchHelper extends ItemTouchHelper.Callback {
 
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        // Enable drag and swipe in both directions
+        // Enable drag and swipe directions
         final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        final int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+        final int swipeFlags = ItemTouchHelper.END;
         return makeMovementFlags(dragFlags, swipeFlags);
     }
 
@@ -61,6 +61,11 @@ public class CustomItemTouchHelper extends ItemTouchHelper.Callback {
             View itemView = viewHolder.itemView;
             final float alpha = ALPHA_FULL - Math.abs(dX) / (float) itemView.getWidth();
             itemView.setAlpha(alpha);
+
+            //Still playing around with the rotations.
+            itemView.setRotationX(dX / 2); //Use this one if you want flip effect
+            //itemView.setRotation(dX - dY); //Use this one if you want rotation effect
+
         }
     }
 
