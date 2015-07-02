@@ -2,6 +2,7 @@
 
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/trend_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -50,7 +51,8 @@
                     android:id="@+id/newsSection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="News Section"/>
+                    android:hint="News Section"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/newsTitle"
@@ -71,7 +73,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="5dp">
+            android:paddingTop="5dp"
+            android:layout_marginBottom="2dp">
 
             <ImageView
                 android:id="@+id/newsThumbnailSecond"
@@ -95,7 +98,8 @@
                     android:id="@+id/newsSectionSecond"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="News Section"/>
+                    android:hint="News Section"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/newsTitleSecond"
@@ -111,9 +115,11 @@
             android:id="@+id/moreBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_arrow_forward_black_24dp"
+            android:drawableLeft="@drawable/ic_arrow_forward_white_24dp"
             android:onClick="moreNews"
-            android:text="View more stories"/>
+            android:text="View more stories"
+            android:background="@color/primaryColor"
+            android:textColor="@color/text_icon"/>
     </LinearLayout>
 
     <ProgressBar
@@ -125,6 +131,9 @@
         android:elevation="2dp"
         android:layout_gravity="center_horizontal|center_vertical"
         android:visibility="gone"/>
+
+
+
 
 </android.support.v7.widget.CardView>
 

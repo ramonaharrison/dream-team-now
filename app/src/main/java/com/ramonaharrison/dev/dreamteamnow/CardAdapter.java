@@ -3,7 +3,6 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.internal.view.menu.MenuView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -270,6 +269,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             TrendInfo trendInfo = (TrendInfo) cardList.get(position);
             TrendingViewHolder trendViewHolder = (TrendingViewHolder) viewHolder;
             trendViewHolder.progress.setVisibility(View.VISIBLE);
+
             trendInfo.setFields(trendViewHolder, context);
             setAnimation(trendViewHolder.trendCard, position);
         }
