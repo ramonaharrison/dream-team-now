@@ -7,14 +7,13 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.Currently;
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.Daily;
+import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.Datum__;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.WeatherConditions;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherConditions.WeatherConditionsAPI;
-import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherIcon.WeatherIcon;
-import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherIcon.WeatherIconAPI;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.Location;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.WeatherLocation;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.WeatherLocationAPI;
-import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -23,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -69,31 +70,32 @@ public class WeatherInfo extends CardInfo {
     private String windMPH;
     private String windKPH;
     private String conditionIconURL;
-    private String summaryIconName;
+    private String iconSummary;
     private boolean isMetric;
 
-    //data for 4 day forecast
+    //data for 5 day forecast
+    private Calendar calendar;
     private String[] highF;
     private String[] highC;
     private String[] lowF;
     private String[] lowC;
     private String[] summaries;
-    private String[] icon_summaries;
-    private String[] icon_urls;
+    private String[] iconSummaries;
+    private final String[] days = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
 
     //data booleans
     private boolean conditionsComplete;
     private boolean locationComplete;
     private boolean iconComplete;
 
+
+
     public WeatherInfo(Context context) {
         this.context = context.getApplicationContext();
         setType("weather");
-        isMetric = false;
-        conditionsComplete = false;
-        locationComplete = false;
-        iconComplete = false;
         setPriority(1);
+        initializeData();
+
         android.location.Location weather = getLocation();
         setLatLon(weather);
 
@@ -102,34 +104,19 @@ public class WeatherInfo extends CardInfo {
         retrofitWeatherLocation();
     }
 
-    private void retrofitIconSearch() {
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(ICONSEARCH_EP)
-                .build();
+    private void initializeData(){
+        this.calendar = Calendar.getInstance();
+        isMetric = false;
+        conditionsComplete = false;
+        locationComplete = false;
+        iconComplete = false;
 
-        WeatherIconAPI weatherIconAPI = restAdapter.create(WeatherIconAPI.class);
-
-
-        Log.d("SummaryIconName", summaryIconName + "");
-        weatherIconAPI.getFeed(summaryIconName.replaceAll("-","%20") + ICONSEARCH_APPEND, new Callback<WeatherIcon>() {
-
-            @Override
-            public void success(WeatherIcon weatherIcon, Response response) {
-                try {
-                    conditionIconURL = weatherIcon.getResponseData().getResults().get(0).getUrl();
-                }catch(IndexOutOfBoundsException e){
-                    Log.d("Retrofit: Weather Icon ", "No Search Results found");
-                }
-                iconComplete = true;
-                Log.d("Retrofit", "Weather Icon Search: Success");
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                iconComplete = true;
-                Log.d("Retrofit", "Weather Icon Search: FAILED");
-            }
-        });
+        highF = new String[5];
+        highC = new String[5];
+        lowF = new String[5];
+        lowC = new String[5];
+        summaries = new String[5];
+        iconSummaries = new String[5];
     }
 
     private void retrofitWeatherConditions() {
@@ -145,14 +132,33 @@ public class WeatherInfo extends CardInfo {
             public void success(WeatherConditions weatherConditions, Response response) {
                 Currently currently = weatherConditions.getCurrently();
 
-                tempC = ((int)((currently.getTemperature() - 32) * (5/9))) + "°";
-                tempF = currently.getTemperature().intValue() + "°";
+                double temp = Math.round(currently.getTemperature());
+
+                tempC = ((int)((temp - 32) * (5/9))) + "°";
+                tempF = ((int) temp) + "°";
                 weather = currently.getSummary();
                 humidity = ((int)(currently.getHumidity() * 100)) + "%";
                 windMPH = currently.getWindSpeed().intValue() + " mph";
                 windKPH = ((int)(currently.getWindSpeed() * 1.60934)) + " kph";
-                summaryIconName = currently.getIcon();
-                retrofitIconSearch();
+                iconSummary = currently.getIcon();
+
+                Daily daily = weatherConditions.getDaily();
+                List<Datum__> data = daily.getData();
+
+                for(int i = 0; i < 5; i++){
+                    double high = Math.round(data.get(i).getTemperatureMax());
+                    highF[i] = ((int) high) + "°";
+                    highC[i] = ((int) ((high - 32) * (5/9) )) + "°";
+
+                    double low = Math.round(data.get(i).getTemperatureMin());
+                    lowF[i] = ((int) low) + "°";
+                    lowC[i] = ((int) ((low - 32) * (5/9) )) + "°";
+
+                    summaries[i] = data.get(i).getSummary();
+                    iconSummaries[i] = data.get(i).getIcon();
+
+                }
+
                 conditionsComplete = true;
                 Log.d("Retrofit","Weather Conditions: Success");
             }
@@ -204,7 +210,7 @@ public class WeatherInfo extends CardInfo {
     private android.location.Location getLocation(){
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setPowerRequirement(Criteria.POWER_LOW);
         return lm.getLastKnownLocation(lm.getBestProvider(criteria, true));
     }
@@ -263,23 +269,66 @@ public class WeatherInfo extends CardInfo {
         }
     }
 
-    public void bindViews(final CardAdapter.WeatherViewHolder weatherViewHolder){
+    public void bindViews(final CardAdapter.WeatherViewHolder wvh){
         Runnable bindViews = new Runnable() {
             @Override
             public void run() {
                 Log.d("Adapter","Binding Weather Card");
-                weatherViewHolder.city.setText(city);
-                weatherViewHolder.location.setText(state + " " + country + " " + zip);
-                weatherViewHolder.condition.setText(weather);
-                weatherViewHolder.humidity.setText("Percip " + humidity);
+                wvh.city.setText(city);
+                wvh.location.setText(state + " " + country + " " + zip);
+                wvh.condition.setText(weather);
+                wvh.humidity.setText("Percip " + humidity);
                 if (isMetric) {
-                    weatherViewHolder.temp.setText(tempC);
-                    weatherViewHolder.wind.setText("Wind " + windKPH);
+                    wvh.temp.setText(tempC);
+                    wvh.wind.setText("Wind " + windKPH);
                 } else {
-                    weatherViewHolder.temp.setText(tempF);
-                    weatherViewHolder.wind.setText("Wind " + windMPH);
+                    wvh.temp.setText(tempF);
+                    wvh.wind.setText("Wind " + windMPH);
                 }
-                Picasso.with(weatherViewHolder.weatherCard.getContext()).load(conditionIconURL).centerCrop().resize(250,250).into(weatherViewHolder.conditionImage);
+
+                wvh.conditionImage.setImageResource(getIconResource(iconSummary));
+
+                int currentDay = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+
+                wvh.day1.setText(days[currentDay]);
+                wvh.day2.setText(days[(currentDay + 1) % 7]);
+                wvh.day3.setText(days[(currentDay + 2) % 7]);
+                wvh.day4.setText(days[(currentDay + 3) % 7]);
+                wvh.day5.setText(days[(currentDay + 4) % 7]);
+
+                wvh.condition1.setImageResource(getIconResource(iconSummaries[0]));
+                wvh.condition2.setImageResource(getIconResource(iconSummaries[1]));
+                wvh.condition3.setImageResource(getIconResource(iconSummaries[2]));
+                wvh.condition4.setImageResource(getIconResource(iconSummaries[3]));
+                wvh.condition5.setImageResource(getIconResource(iconSummaries[4]));
+
+                if(isMetric){
+                    wvh.maxTemp1.setText(highC[0]);
+                    wvh.maxTemp2.setText(highC[1]);
+                    wvh.maxTemp3.setText(highC[2]);
+                    wvh.maxTemp4.setText(highC[3]);
+                    wvh.maxTemp5.setText(highC[4]);
+
+                    wvh.minTemp1.setText(lowC[0]);
+                    wvh.minTemp2.setText(lowC[1]);
+                    wvh.minTemp3.setText(lowC[2]);
+                    wvh.minTemp4.setText(lowC[3]);
+                    wvh.minTemp5.setText(lowC[4]);
+                }else {
+                    wvh.maxTemp1.setText(highF[0]);
+                    wvh.maxTemp2.setText(highF[1]);
+                    wvh.maxTemp3.setText(highF[2]);
+                    wvh.maxTemp4.setText(highF[3]);
+                    wvh.maxTemp5.setText(highF[4]);
+
+                    wvh.minTemp1.setText(lowF[0]);
+                    wvh.minTemp2.setText(lowF[1]);
+                    wvh.minTemp3.setText(lowF[2]);
+                    wvh.minTemp4.setText(lowF[3]);
+                    wvh.minTemp5.setText(lowF[4]);
+                }
+
+
 
             }
         };
@@ -288,7 +337,38 @@ public class WeatherInfo extends CardInfo {
 
     }
 
-    public boolean dataIsReady(){
+    private int getIconResource(String iconSummary){
+        switch (iconSummary){
+            case "cloudy":
+                return R.drawable.cloudy;
+            case "partly-cloudy-day":
+                return R.drawable.cloudy_day;
+            case "partly-cloudy-night":
+                return R.drawable.cloudy_night;
+            case "clear-day":
+                return R.drawable.clear_day;
+            case "clear-night":
+                return R.drawable.cloudy_night;
+            case "rain":
+                return R.drawable.rain;
+            case "snow":
+                return R.drawable.snow;
+            case "sleet":
+                return R.drawable.sleet;
+            case "wind":
+                return R.drawable.wind;
+            case "fog":
+                return R.drawable.fog;
+            case "thunderstorm":
+                return R.drawable.thunderstorm;
+            case "hail":
+                return R.drawable.hail;
+            default:
+                return R.drawable.clear_day;
+        }
+    }
+
+    private boolean dataIsReady(){
         return conditionsComplete & iconComplete & locationComplete;
     }
 

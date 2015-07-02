@@ -13,11 +13,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -62,7 +60,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         initializeRecyclerView();
         initializeCards();
         setAdapter();
-        setItemTouchHelper();
+        setItemTouchHelper(cAdapter);
     }
 
     @Override
@@ -111,14 +109,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onRefresh() {
-                cards = new ArrayList<CardInfo>();
-                initializeTrend();
-                initializeTodo();
-                initializeWeather();
-                initializeMap();
-                sortCardList(cards);
+
+                initializeCards();
                 cAdapter = new CardAdapter(cards, getApplicationContext(),mapItemView);
-                recyclerView.swapAdapter(cAdapter, true);
+                recyclerView.swapAdapter(cAdapter, false);
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -159,8 +153,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     //ItemTouch Helper for swiping/dragging
-    public void setItemTouchHelper(){
-        ItemTouchHelper.Callback callback = new CustomItemTouchHelper(cAdapter);
+    public void setItemTouchHelper(CardAdapter adapter){
+        ItemTouchHelper.Callback callback = new CustomItemTouchHelper(adapter);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);

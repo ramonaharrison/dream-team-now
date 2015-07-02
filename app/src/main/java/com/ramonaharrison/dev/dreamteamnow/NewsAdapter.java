@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ramonaharrison.dev.dreamteamnow.NYTAPI.Doc;
 import com.ramonaharrison.dev.dreamteamnow.NYTAPI.Result;
 import com.squareup.picasso.Picasso;
 
@@ -19,17 +20,18 @@ import java.util.List;
  */
 public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Result> newsList;
+    private List newsList;
     private Context context;
 
-    public NewsAdapter(List<Result> newsList, Context context){
+    public NewsAdapter(List newsList, Context context){
         this.newsList = newsList;
         this.context = context;
     }
 
+
     public class NewsViewHolder extends RecyclerView.ViewHolder {
 
-        protected TextView storyTitle, storyDescription, storyTime;
+        protected TextView storyTitle, storyDescription;
         protected ImageView storyImage;
 
         public NewsViewHolder(View v) {
@@ -37,7 +39,6 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             storyTitle = (TextView) v.findViewById(R.id.newsStoryTitle);
             storyDescription = (TextView) v.findViewById(R.id.newsStoryDescription);
-            storyTime = (TextView)v.findViewById(R.id.newsStoryTime);
             storyImage = (ImageView) v.findViewById(R.id.newsStoryImage);
         }
 
@@ -55,12 +56,21 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        Result newsStory = newsList.get(position);
-        NewsViewHolder newsViewHolder = (NewsViewHolder) holder;
-        newsViewHolder.storyTitle.setText(newsStory.getTitle());
-        newsViewHolder.storyDescription.setText(newsStory.getAbstract());
-        loadImage(context, newsStory.getThumbnailStandard(), newsViewHolder.storyImage);
-        newsViewHolder.itemView.setOnClickListener(new CustomViewListener(newsStory.getUrl()));
+        if(newsList.get(position).getClass() == Result.class) {
+            Result newsStory = (Result) newsList.get(position);
+            NewsViewHolder newsViewHolder = (NewsViewHolder) holder;
+            newsViewHolder.storyTitle.setText(newsStory.getTitle());
+            newsViewHolder.storyDescription.setText(newsStory.getAbstract());
+            loadImage(context, newsStory.getThumbnailStandard(), newsViewHolder.storyImage);
+            newsViewHolder.itemView.setOnClickListener(new CustomViewListener(newsStory.getUrl()
+            ));
+        }else if(newsList.get(position).getClass() == Doc.class) {
+            Doc newsStory = (Doc) newsList.get(position);
+            NewsViewHolder newsViewHolder = (NewsViewHolder) holder;
+            newsViewHolder.storyTitle.setText(newsStory.getHeadline().getMain());
+            newsViewHolder.storyDescription.setText(newsStory.getAbstract());
+            newsViewHolder.itemView.setOnClickListener(new CustomViewListener(newsStory.getWebUrl()));
+        }
 
 
     }

@@ -3,6 +3,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.ramonaharrison.dev.dreamteamnow.NYTAPI.NYTModel;
@@ -74,13 +75,24 @@ public void getNewsData(){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                trendingViewHolder.section.setText(getNewsStories().get(0).getSection());
-                trendingViewHolder.title.setText(getNewsStories().get(0).getTitle());
-                loadImage(context, trendingViewHolder.thumbnail, 0);
+                try {
+                    trendingViewHolder.section.setText(getNewsStories().get(0).getSection());
+                    trendingViewHolder.title.setText(getNewsStories().get(0).getTitle());
+                    loadImage(context, trendingViewHolder.thumbnail, 0);
 
-                trendingViewHolder.section2.setText(getNewsStories().get(1).getSection());
-                trendingViewHolder.title2.setText(getNewsStories().get(1).getTitle());
-                loadImage(context, trendingViewHolder.thumbnail2, 1);
+                    trendingViewHolder.section2.setText(getNewsStories().get(1).getSection());
+                    trendingViewHolder.title2.setText(getNewsStories().get(1).getTitle());
+                    loadImage(context, trendingViewHolder.thumbnail2, 1);
+                    trendingViewHolder.progress.setVisibility(View.GONE);
+                }
+                catch(Exception e){
+                    trendingViewHolder.section.setText("Error");
+                    trendingViewHolder.title.setText("Could not load content");
+
+                    trendingViewHolder.section2.setText("Error");
+                    trendingViewHolder.title2.setText("Could not load content");
+                    trendingViewHolder.progress.setVisibility(View.GONE);
+                }
 
             }
         };
