@@ -66,8 +66,6 @@ public class CustomItemTouchHelper extends ItemTouchHelper.Callback {
             itemView.setRotationX(dX / 2); //Use this one if you want flip effect
             //itemView.setRotation(dX - dY); //Use this one if you want rotation effect
 
-
-            //Use both for combined effect
         }
     }
 
