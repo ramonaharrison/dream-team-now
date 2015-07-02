@@ -2,6 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.ramonaharrison.dev.dreamteamnow.NewsActivity">
+
+    <item
+        android:id="@+id/action_search"
+        android:title="Search For News Article"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_search_white_24dp"/>
     <item
         android:id="@+id/action_close"
         android:title="Close News Activity"

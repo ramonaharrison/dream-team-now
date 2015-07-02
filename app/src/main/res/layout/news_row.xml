@@ -22,7 +22,8 @@
             <ImageView
                 android:id="@+id/newsStoryImage"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:src="@drawable/img_unavailable"/>
         </LinearLayout>
 
         <LinearLayout

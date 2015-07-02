@@ -14,4 +14,5 @@
     <string name="remind_me">Remind me</string>
     <string name="title_activity_news">Top 20 Trending Stories</string>
     <string name="title_activity_web">WebActivity</string>
+    <string name="title_activity_news_search">NewsSearchActivity</string>
 </resources>

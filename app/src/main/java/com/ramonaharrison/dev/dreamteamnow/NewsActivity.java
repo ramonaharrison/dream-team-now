@@ -1,5 +1,6 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.ramonaharrison.dev.dreamteamnow.NYTAPI.Doc;
 import com.ramonaharrison.dev.dreamteamnow.NYTAPI.Result;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ public class NewsActivity extends AppCompatActivity{
 
     private RecyclerView recyclerView;
     private NewsAdapter newsAdapter;
-    private List<Result> news = new ArrayList<>(0);
+    private List news = new ArrayList<>(0);
 
     // add menu item to close activity/go back
 
@@ -34,9 +36,17 @@ public class NewsActivity extends AppCompatActivity{
 
     private void getBundleFromIntent(){
 
-        Object obj = getIntent().getExtras().get("news");
-        if(obj != null){
-            news = (List<Result>) obj;
+        if(getIntent().getExtras().containsKey("news")) {
+            Object obj = getIntent().getExtras().get("news");
+            if (obj != null) {
+                news = (List<Result>) obj;
+            }
+        }
+        else if(getIntent().getExtras().containsKey("query")){
+            Object obj = getIntent().getExtras().get("query");
+            if (obj != null) {
+                news = (List<Doc>) obj;
+            }
         }
     }
 
@@ -72,6 +82,11 @@ public class NewsActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        if(id == R.id.action_search){
+            Intent searchNewsIntent = new Intent(this, NewsSearchActivity.class);
+            startActivity(searchNewsIntent);
+            overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
+        }
         if (id == R.id.action_close) {
             this.finish();
             return true;
