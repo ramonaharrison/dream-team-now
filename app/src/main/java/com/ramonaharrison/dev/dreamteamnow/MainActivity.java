@@ -82,7 +82,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         initializeTrend();
         initializeTodo();
         initializeWeather();
-        initializeMap();
         sortCardList(cards);
 
     }

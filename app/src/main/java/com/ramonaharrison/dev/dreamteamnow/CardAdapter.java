@@ -35,12 +35,16 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int WEATHER = 2;
     private final int MAP = 692;
     private final int TREND = 11;
+    private final int HEADER = 22;
 
     private View mapItemView;
 
     public CardAdapter(List<CardInfo> cardList, Context context) {
         this.cardList = cardList;
         this.context = context;
+
+        cardList.add(0,new HeaderInfo());
+
     }
 
     public CardAdapter(List<CardInfo> cardList, Context context, View mapItemView){
@@ -104,6 +108,28 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         protected ImageView conditionImage;
         protected TextView temp;
 
+        protected TextView day1;
+        protected TextView day2;
+        protected TextView day3;
+        protected TextView day4;
+        protected TextView day5;
+        protected ImageView condition1;
+        protected ImageView condition2;
+        protected ImageView condition3;
+        protected ImageView condition4;
+        protected ImageView condition5;
+        protected TextView maxTemp1;
+        protected TextView maxTemp2;
+        protected TextView maxTemp3;
+        protected TextView maxTemp4;
+        protected TextView maxTemp5;
+        protected TextView minTemp1;
+        protected TextView minTemp2;
+        protected TextView minTemp3;
+        protected TextView minTemp4;
+        protected TextView minTemp5;
+
+
         public WeatherViewHolder(View v) {
             super(v);
             weatherCard = (CardView) v.findViewById(R.id.weather_card_view);
@@ -114,6 +140,28 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             humidity = (TextView) v.findViewById(R.id.humidity);
             conditionImage = (ImageView) v.findViewById(R.id.condition_image);
             temp = (TextView) v.findViewById(R.id.temp);
+
+            day1 = (TextView) v.findViewById(R.id.day1);
+            day2 = (TextView) v.findViewById(R.id.day2);
+            day3 = (TextView) v.findViewById(R.id.day3);
+            day4 = (TextView) v.findViewById(R.id.day4);
+            day5 = (TextView) v.findViewById(R.id.day5);
+            condition1 = (ImageView) v.findViewById(R.id.condition1);
+            condition2 = (ImageView) v.findViewById(R.id.condition2);
+            condition3 = (ImageView) v.findViewById(R.id.condition3);
+            condition4 = (ImageView) v.findViewById(R.id.condition4);
+            condition5 = (ImageView) v.findViewById(R.id.condition5);
+            maxTemp1 = (TextView) v.findViewById(R.id.max_temp1);
+            maxTemp2 = (TextView) v.findViewById(R.id.max_temp2);
+            maxTemp3 = (TextView) v.findViewById(R.id.max_temp3);
+            maxTemp4 = (TextView) v.findViewById(R.id.max_temp4);
+            maxTemp5 = (TextView) v.findViewById(R.id.max_temp5);
+            minTemp1 = (TextView) v.findViewById(R.id.min_temp1);
+            minTemp2 = (TextView) v.findViewById(R.id.min_temp2);
+            minTemp3 = (TextView) v.findViewById(R.id.min_temp3);
+            minTemp4 = (TextView) v.findViewById(R.id.min_temp4);
+            minTemp5 = (TextView) v.findViewById(R.id.min_temp5);
+
         }
     }
 
@@ -141,6 +189,17 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public class HeaderViewHolder extends RecyclerView.ViewHolder{
+        ImageView title;
+        CardView header;
+
+        public HeaderViewHolder(View v){
+            super(v);
+            title = (ImageView) v.findViewById(R.id.header);
+            header = (CardView) v.findViewById(R.id.header_card);
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
         // TODO: add an if statement/int value for each card type
@@ -153,6 +212,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         else if(cardList.get(position).getType().equals("trend"))
             return TREND;
+        else if(cardList.get(position).getType().equals("header"))
+            return HEADER;
 
         return 0;
     }
@@ -193,6 +254,13 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return new MapViewHolder(mapItemView);
             }
 
+        }
+
+        if(viewType == HEADER){
+            View itemView = LayoutInflater.
+                    from(parent.getContext()).
+                    inflate(R.layout.header_card, parent, false);
+            return new HeaderViewHolder(itemView);
         }
 
         return null;
@@ -272,6 +340,24 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             trendInfo.setFields(trendViewHolder, context);
             setAnimation(trendViewHolder.trendCard, position);
+        }else if(viewHolder.getItemViewType() == HEADER) {
+            HeaderInfo headerInfo = (HeaderInfo) cardList.get(position);
+            HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
+
+            switch(headerInfo.timeOfDay()){
+                case "day":
+                    headerViewHolder.title.setImageResource(R.drawable.header_day);
+                    break;
+                case "midday":
+                    headerViewHolder.title.setImageResource(R.drawable.header_midday);
+                    break;
+                case "night":
+                    headerViewHolder.title.setImageResource(R.drawable.header_night);
+                    break;
+                default:
+                    headerViewHolder.title.setImageResource(R.drawable.header_day);
+            }
+            setAnimation(headerViewHolder.header, position);
         }
     }
 
