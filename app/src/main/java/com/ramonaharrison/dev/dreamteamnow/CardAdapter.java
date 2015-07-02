@@ -35,12 +35,16 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int WEATHER = 2;
     private final int MAP = 692;
     private final int TREND = 11;
+    private final int HEADER = 22;
 
     private View mapItemView;
 
     public CardAdapter(List<CardInfo> cardList, Context context) {
         this.cardList = cardList;
         this.context = context;
+
+        cardList.add(0,new HeaderCard());
+
     }
 
     public CardAdapter(List<CardInfo> cardList, Context context, View mapItemView){
@@ -139,6 +143,17 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public class HeaderViewHolder extends RecyclerView.ViewHolder{
+        ImageView title;
+        CardView header;
+
+        public HeaderViewHolder(View v){
+            super(v);
+            title = (ImageView) v.findViewById(R.id.header);
+            header = (CardView) v.findViewById(R.id.header_card);
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
         // TODO: add an if statement/int value for each card type
@@ -151,6 +166,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         else if(cardList.get(position).getType().equals("trend"))
             return TREND;
+        else if(cardList.get(position).getType().equals("header"))
+            return HEADER;
 
         return 0;
     }
@@ -191,6 +208,13 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return new MapViewHolder(mapItemView);
             }
 
+        }
+
+        if(viewType == HEADER){
+            View itemView = LayoutInflater.
+                    from(parent.getContext()).
+                    inflate(R.layout.header_card, parent, false);
+            return new HeaderViewHolder(itemView);
         }
 
         return null;
@@ -268,6 +292,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             TrendingViewHolder trendViewHolder = (TrendingViewHolder) viewHolder;
             trendInfo.setFields(trendViewHolder, context);
             setAnimation(trendViewHolder.trendCard, position);
+        }else if(viewHolder.getItemViewType() == HEADER) {
+            HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
+            headerViewHolder.title.setImageResource(R.drawable.title);
+            setAnimation(headerViewHolder.header, position);
         }
     }
 

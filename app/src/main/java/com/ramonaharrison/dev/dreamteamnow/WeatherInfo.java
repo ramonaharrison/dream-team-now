@@ -14,7 +14,6 @@ import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherIcon.WeatherIconAPI
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.Location;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.WeatherLocation;
 import com.ramonaharrison.dev.dreamteamnow.WeatherAPI.WeatherLocation.WeatherLocationAPI;
-import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -69,7 +68,7 @@ public class WeatherInfo extends CardInfo {
     private String windMPH;
     private String windKPH;
     private String conditionIconURL;
-    private String summaryIconName;
+    private String iconSummary;
     private boolean isMetric;
 
     //data for 4 day forecast
@@ -110,8 +109,8 @@ public class WeatherInfo extends CardInfo {
         WeatherIconAPI weatherIconAPI = restAdapter.create(WeatherIconAPI.class);
 
 
-        Log.d("SummaryIconName", summaryIconName + "");
-        weatherIconAPI.getFeed(summaryIconName.replaceAll("-","%20") + ICONSEARCH_APPEND, new Callback<WeatherIcon>() {
+        Log.d("SummaryIconName", iconSummary + "");
+        weatherIconAPI.getFeed(iconSummary.replaceAll("-","%20") + ICONSEARCH_APPEND, new Callback<WeatherIcon>() {
 
             @Override
             public void success(WeatherIcon weatherIcon, Response response) {
@@ -145,13 +144,15 @@ public class WeatherInfo extends CardInfo {
             public void success(WeatherConditions weatherConditions, Response response) {
                 Currently currently = weatherConditions.getCurrently();
 
-                tempC = ((int)((currently.getTemperature() - 32) * (5/9))) + "°";
-                tempF = currently.getTemperature().intValue() + "°";
+                double temp = Math.round(currently.getTemperature());
+
+                tempC = ((int)((temp - 32) * (5/9))) + "°";
+                tempF = ((int) temp) + "°";
                 weather = currently.getSummary();
                 humidity = ((int)(currently.getHumidity() * 100)) + "%";
                 windMPH = currently.getWindSpeed().intValue() + " mph";
                 windKPH = ((int)(currently.getWindSpeed() * 1.60934)) + " kph";
-                summaryIconName = currently.getIcon();
+                iconSummary = currently.getIcon();
                 retrofitIconSearch();
                 conditionsComplete = true;
                 Log.d("Retrofit","Weather Conditions: Success");
@@ -204,7 +205,7 @@ public class WeatherInfo extends CardInfo {
     private android.location.Location getLocation(){
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setPowerRequirement(Criteria.POWER_LOW);
         return lm.getLastKnownLocation(lm.getBestProvider(criteria, true));
     }
@@ -279,7 +280,8 @@ public class WeatherInfo extends CardInfo {
                     weatherViewHolder.temp.setText(tempF);
                     weatherViewHolder.wind.setText("Wind " + windMPH);
                 }
-                Picasso.with(weatherViewHolder.weatherCard.getContext()).load(conditionIconURL).centerCrop().resize(250,250).into(weatherViewHolder.conditionImage);
+
+                weatherViewHolder.conditionImage.setImageResource(getIconResource(iconSummary));
 
             }
         };
@@ -288,7 +290,38 @@ public class WeatherInfo extends CardInfo {
 
     }
 
-    public boolean dataIsReady(){
+    private int getIconResource(String iconSummary){
+        switch (iconSummary){
+            case "cloudy":
+                return R.drawable.cloudy;
+            case "partly-cloudy-day":
+                return R.drawable.cloudy_day;
+            case "partly-cloudy-night":
+                return R.drawable.cloudy_night;
+            case "clear-day":
+                return R.drawable.clear_day;
+            case "clear-night":
+                return R.drawable.cloudy_night;
+            case "rain":
+                return R.drawable.rain;
+            case "snow":
+                return R.drawable.snow;
+            case "sleet":
+                return R.drawable.sleet;
+            case "wind":
+                return R.drawable.wind;
+            case "fog":
+                return R.drawable.fog;
+            case "thunderstorm":
+                return R.drawable.thunderstorm;
+            case "hail":
+                return R.drawable.hail;
+            default:
+                return R.drawable.clear_day;
+        }
+    }
+
+    private boolean dataIsReady(){
         return conditionsComplete & iconComplete & locationComplete;
     }
 
