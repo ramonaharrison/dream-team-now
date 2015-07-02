@@ -29,7 +29,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public class NewsViewHolder extends RecyclerView.ViewHolder {
 
-        protected TextView storyTitle, storyDescription, storyTime;
+        protected TextView storyTitle, storyDescription;
         protected ImageView storyImage;
 
         public NewsViewHolder(View v) {
@@ -37,7 +37,6 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             storyTitle = (TextView) v.findViewById(R.id.newsStoryTitle);
             storyDescription = (TextView) v.findViewById(R.id.newsStoryDescription);
-            storyTime = (TextView)v.findViewById(R.id.newsStoryTime);
             storyImage = (ImageView) v.findViewById(R.id.newsStoryImage);
         }
 

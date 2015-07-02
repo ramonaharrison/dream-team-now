@@ -1,7 +1,7 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -13,13 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class NewsActivity extends Activity {
+public class NewsActivity extends AppCompatActivity{
 
     private RecyclerView recyclerView;
     private NewsAdapter newsAdapter;
     private List<Result> news = new ArrayList<>(0);
 
-    //TODO: setonItemClick to open url on webView
     // add menu item to close activity/go back
 
     @Override
@@ -73,7 +72,8 @@ public class NewsActivity extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_close) {
+            this.finish();
             return true;
         }
 
