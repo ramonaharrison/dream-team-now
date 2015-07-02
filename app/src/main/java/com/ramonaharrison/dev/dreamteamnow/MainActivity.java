@@ -2,17 +2,22 @@ package com.ramonaharrison.dev.dreamteamnow;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,6 +38,7 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, PopupMenu.OnMenuItemClickListener, ConnectionCallbacks, OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private CoordinatorLayout mainContent;
     private List<CardInfo> cards;
     private SQLController dbController;
@@ -41,6 +47,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationRequest mLocationRequest;
     private Location mCurrentLocation;
     private Calendar calendar;
+    private static View mapItemView;
 
 
     @Override
@@ -51,6 +58,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         buildGoogleApiClient();
         mainContent = (CoordinatorLayout) findViewById(R.id.main_content);
 
+        initializeRefreshLayout();
         initializeRecyclerView();
         initializeCards();
         setAdapter();
@@ -92,6 +100,38 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         TrendInfo trend = new TrendInfo();
         cards.add(trend);
 
+    }
+
+    // uses SwipeRefreshLayout to implement pull to refresh feature
+    private void initializeRefreshLayout(){
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        int[] colorScheme = {Color.MAGENTA, Color.YELLOW, Color.CYAN, Color.GREEN };
+        swipeRefreshLayout.setColorSchemeColors(colorScheme);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                cards = new ArrayList<CardInfo>();
+                initializeTrend();
+                initializeTodo();
+                initializeWeather();
+                initializeMap();
+                sortCardList(cards);
+                cAdapter = new CardAdapter(cards, getApplicationContext(),mapItemView);
+                recyclerView.swapAdapter(cAdapter, true);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },2000);
+            }
+        });
+    }
+
+    public static void setMapItemView(View mapIV){
+        mapItemView = mapIV;
     }
 
     protected synchronized void buildGoogleApiClient() {

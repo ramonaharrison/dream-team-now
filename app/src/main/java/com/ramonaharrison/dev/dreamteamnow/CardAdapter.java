@@ -3,6 +3,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.internal.view.menu.MenuView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,13 +32,20 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // TODO: add an int value for each card type
     private final int TODO = 1;
-    final int WEATHER = 2;
+    private final int WEATHER = 2;
     private final int MAP = 692;
     private final int TREND = 11;
+
+    private View mapItemView;
 
     public CardAdapter(List<CardInfo> cardList, Context context) {
         this.cardList = cardList;
         this.context = context;
+    }
+
+    public CardAdapter(List<CardInfo> cardList, Context context, View mapItemView){
+        this(cardList, context);
+        this.mapItemView = mapItemView;
     }
 
 
@@ -172,11 +180,17 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          }
 
         if (viewType == MAP) {
-            View itemView = LayoutInflater.
-                    from(parent.getContext()).
-                    inflate(R.layout.map_card, parent, false);
+            if(mapItemView == null){
+                View itemView = LayoutInflater.
+                        from(parent.getContext()).
+                        inflate(R.layout.map_card, parent, false);
+                MainActivity.setMapItemView(itemView);
 
-            return new MapViewHolder(itemView);
+                return new MapViewHolder(itemView);
+            }else{
+                return new MapViewHolder(mapItemView);
+            }
+
         }
 
         return null;

@@ -84,6 +84,6 @@ public void getNewsData(){
 
             }
         };
-        new Handler().postDelayed(runnable,2000);
+        new Handler().postDelayed(runnable,3000);
     }
 }
