@@ -149,6 +149,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private void setAdapter() {
         cAdapter = new CardAdapter(cards, getApplicationContext());
         recyclerView.setAdapter(cAdapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getApplicationContext(), new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        setContentView(R.layout.detail_view);
+                    }
+                })
+        );
 
     }
 
