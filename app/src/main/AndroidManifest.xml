@@ -61,6 +61,10 @@
             android:name=".NewsSearchActivity"
             android:label="@string/title_activity_news_search" >
         </activity>
+        <activity
+            android:name=".TabletActivity"
+            android:label="@string/title_activity_tablet" >
+        </activity>
     </application>
 
 </manifest>
