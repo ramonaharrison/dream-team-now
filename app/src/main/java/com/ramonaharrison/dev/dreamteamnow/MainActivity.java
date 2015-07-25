@@ -11,8 +11,6 @@ import android.widget.FrameLayout;
 public class MainActivity extends FragmentActivity {
 
     FragmentManager fragmentManager;
-    FrameLayout mainFrameLayout;
-    FrameLayout detailFrameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +18,6 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         fragmentManager = getFragmentManager();
-        mainFrameLayout = (FrameLayout) findViewById(R.id.main_content_frame);
-        detailFrameLayout = (FrameLayout) findViewById(R.id.detail_content_frame);
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         MainFragment mainFragment = new MainFragment();
@@ -54,7 +50,6 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void refreshMainFragment(){
-        mainFrameLayout.removeAllViews();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_content_frame, new MainFragment()).commit();
     }
