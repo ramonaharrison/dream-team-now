@@ -67,7 +67,7 @@ public class NewsSearchFragment extends Fragment implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.activity_news_search, container, false);
+        rootView = inflater.inflate(R.layout.fragment_news_search, container, false);
         context = container.getContext().getApplicationContext();
 
         dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
@@ -75,6 +75,22 @@ public class NewsSearchFragment extends Fragment implements View.OnClickListener
         findViewsById();
         setupDayfields();
         setDateTimeField();
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String queryString = searchQuery.getText().toString();
+                String fullBeginDate = beginYear + "" +beginMonth +"" + beginDay;
+                String fullEndDate =endYear + "" +endMonth +"" + endDay;
+
+                if(queryString.length() > 0){
+                    getNewsData(queryString,fullBeginDate,fullEndDate);
+                }
+                else{
+                    Toast.makeText(context, "Don't leave any fields blank!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         return rootView;
     }
@@ -143,19 +159,6 @@ public class NewsSearchFragment extends Fragment implements View.OnClickListener
             beginDatePickerDialog.show();
         } else if(view == endDate) {
             endDatePickerDialog.show();
-        }
-    }
-
-    public void searchForNews(View v){
-        String queryString = searchQuery.getText().toString();
-        String fullBeginDate = beginYear + "" +beginMonth +"" + beginDay;
-        String fullEndDate =endYear + "" +endMonth +"" + endDay;
-
-        if(queryString.length() > 0){
-            getNewsData(queryString,fullBeginDate,fullEndDate);
-        }
-        else{
-            Toast.makeText(context, "Don't leave any fields blank!", Toast.LENGTH_SHORT).show();
         }
     }
 

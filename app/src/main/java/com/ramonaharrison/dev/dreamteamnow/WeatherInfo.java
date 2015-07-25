@@ -177,7 +177,6 @@ public class WeatherInfo extends CardInfo {
     private void retrofitWeatherLocation() {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(GEO_ENDPOINT)
-                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build();
 
         WeatherLocationAPI weatherLocationAPI = restAdapter.create(WeatherLocationAPI.class);

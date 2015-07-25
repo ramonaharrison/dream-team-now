@@ -39,6 +39,8 @@ public class NewsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_news,container,false);
 
+        context = container.getContext();
+
         getBundleFromIntent();
         initializeRecyclerView();
         setAdapter();
@@ -101,6 +103,8 @@ public class NewsFragment extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
+
+    
 
 
 }

@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.ramonaharrison.dev.dreamteamnow.db.SQLController;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -340,6 +341,19 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             TrendInfo trendInfo = (TrendInfo) cardList.get(position);
             TrendingViewHolder trendViewHolder = (TrendingViewHolder) viewHolder;
             trendViewHolder.progress.setVisibility(View.VISIBLE);
+
+            trendViewHolder.moreButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NewsFragment newsFragment = new NewsFragment();
+                    Bundle bundle = new Bundle();
+                    TrendInfo info = (TrendInfo) cardList.get(position);
+                    bundle.putSerializable("news",(Serializable) info.getNewsStories());
+                    newsFragment.setArguments(bundle);
+                    ((MainActivity) context).replaceFragment(newsFragment);
+                    ((MainActivity) context).overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
+                }
+            });
 
             trendInfo.setFields(trendViewHolder, context);
             setAnimation(trendViewHolder.trendCard, position);

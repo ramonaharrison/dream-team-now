@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ramonaharrison.dev.dreamteamnow.db.SQLController;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -61,7 +63,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, PopupM
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        context = container.getContext().getApplicationContext();
+        context = container.getContext();
 
         buildGoogleApiClient();
         mainContent = (CoordinatorLayout) rootView.findViewById(R.id.main_content);
@@ -164,6 +166,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, PopupM
                 createTodo();
             }
         });
+
     }
 
     private void setAdapter() {
@@ -182,22 +185,10 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, PopupM
 
     //onClick for more button
     public void moreNews(View v){
-        Intent moreNewsIntent = new Intent(context, NewsActivity.class);
-        TrendInfo info = (TrendInfo) cards.get(findTrendCard());
-        moreNewsIntent.putExtra("news", (java.io.Serializable) info.getNewsStories());
-        startActivity(moreNewsIntent);
-        getActivity().overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
+
     }
 
-    public int findTrendCard(){
 
-        for(int i = 0; i < cards.size(); i++){
-            if(cards.get(i).getType() == "trend"){
-                return i;
-            }
-        }
-        return -1;
-    }
 
     public void createTodo() {
         ((MainActivity)getActivity()).replaceFragment(new TodoFragment());

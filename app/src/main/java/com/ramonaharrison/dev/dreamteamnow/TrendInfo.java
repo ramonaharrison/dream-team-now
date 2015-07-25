@@ -97,4 +97,5 @@ public void getNewsData(){
         };
         new Handler().postDelayed(runnable,3000);
     }
+
 }
