@@ -1,33 +1,40 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-
-public class WebActivity extends Activity {
+/**
+ * Created by c4q-anthonyf on 7/24/15.
+ */
+public class WebFragment extends Fragment {
 
     private WebView myWebView;
     private String url;
     private ProgressBar progressBar;
+    private View rootView;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_web);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_web,container,false);
 
         //TODO: Add progressbar for loading webpages?
         setupProgressBar();
         getUrl();
         setupWebView();
+
+        return rootView;
     }
 
     public void getUrl(){
-        url = getIntent().getExtras().getString("url");
+        url = this.getArguments().getString("url");
         if(url == null){
             url = "www.google.com";
         }
@@ -35,31 +42,18 @@ public class WebActivity extends Activity {
     }
 
     public void setupProgressBar(){
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         progressBar.setMax(100);
     }
 
     public void setupWebView(){
-        myWebView = (WebView) findViewById(R.id.webview);
+        myWebView = (WebView) rootView.findViewById(R.id.webview);
         myWebView.setWebViewClient(new myWebClient());
         myWebView.getSettings().setJavaScriptEnabled(true);
         myWebView.loadUrl(url);
     }
 
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        if((keyCode == KeyEvent.KEYCODE_BACK) && myWebView.canGoBack()){
-            myWebView.goBack();
-            return true;
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public class myWebClient extends WebViewClient{
-
+    public class myWebClient extends WebViewClient {
 
         @Override
         public void onPageFinished(WebView view, String url) {
@@ -68,6 +62,5 @@ public class WebActivity extends Activity {
             progressBar.setVisibility(View.GONE);
         }
     }
-
 
 }

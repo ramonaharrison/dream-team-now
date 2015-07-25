@@ -104,7 +104,7 @@ public class NewsFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    
+
 
 
 }

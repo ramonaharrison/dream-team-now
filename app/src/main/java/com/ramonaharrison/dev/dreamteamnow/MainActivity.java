@@ -25,12 +25,7 @@ public class MainActivity extends FragmentActivity {
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         MainFragment mainFragment = new MainFragment();
-        fragmentTransaction
-                .replace(R.id.main_content_frame, mainFragment);
-        if(fragmentManager.getBackStackEntryCount() == 0) {
-            fragmentTransaction.addToBackStack("main");
-        }
-        fragmentTransaction.commit();
+        fragmentTransaction.replace(R.id.main_content_frame, mainFragment).commit();
 
         if(findViewById(R.id.detail_content_frame) != null){
             FragmentTransaction detailFragTransaction = fragmentManager.beginTransaction();
@@ -50,11 +45,9 @@ public class MainActivity extends FragmentActivity {
         }
 
         if(findViewById(R.id.detail_content_frame) == null) {
-            mainFrameLayout.removeAllViews();
-            fragmentTransaction.replace(R.id.main_content_frame, fragment);
+            fragmentTransaction.replace(R.id.main_content_frame, fragment).addToBackStack(null);
 
         }else{
-            detailFrameLayout.removeAllViews();
             fragmentTransaction.replace(R.id.detail_content_frame, fragment);
         }
         fragmentTransaction.commit();
@@ -64,5 +57,16 @@ public class MainActivity extends FragmentActivity {
         mainFrameLayout.removeAllViews();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_content_frame, new MainFragment()).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(findViewById(R.id.detail_content_frame) == null){
+            fragmentManager.popBackStack();
+        }else{
+            super.onBackPressed();
+        }
+
     }
 }
