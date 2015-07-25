@@ -2,15 +2,15 @@ package com.ramonaharrison.dev.dreamteamnow;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -22,8 +22,10 @@ import com.ramonaharrison.dev.dreamteamnow.db.SQLController;
 
 import java.util.Calendar;
 
-
-public class TodoActivity extends ActionBarActivity {
+/**
+ * Created by c4q-anthonyf on 7/23/15.
+ */
+public class TodoFragment extends Fragment {
 
     private SQLController dbController;
 
@@ -33,6 +35,7 @@ public class TodoActivity extends ActionBarActivity {
     private EditText mLocation;
     private CheckBox mReminder;
     private EditText mMinutesBefore;
+    private FloatingActionButton floatingActionButton;
 
     private String name;
     private String location;
@@ -44,13 +47,20 @@ public class TodoActivity extends ActionBarActivity {
     private boolean reminder;
     private int minutesBefore;
 
+    private View rootView;
+    private Context context;
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_todo);
-        initializeView();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_todo,container, false);
+        context = container.getContext().getApplicationContext();
+
+        initializeViews();
         initializeData();
         setupListeners();
+
+        return rootView;
     }
 
     public void createTodo(View v) {
@@ -58,7 +68,7 @@ public class TodoActivity extends ActionBarActivity {
         if (isValidInput()) {
             saveTodo();
         } else {
-            Toast.makeText(this, "Missing info!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Missing info!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -85,24 +95,25 @@ public class TodoActivity extends ActionBarActivity {
     }
 
     private void saveTodo() {
-        dbController = new SQLController(this);
+        dbController = new SQLController(context);
         dbController.open();
         dbController.insert(name, "", location, day, month, year, hour, minute, reminder, minutesBefore);
         dbController.close();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.refreshMainFragment();
 
     }
 
-    private void initializeView() {
-        mName = (EditText) findViewById(R.id.editText_name);
-        mEtTime = (EditText) findViewById(R.id.editText_time);
-        mEtDate = (EditText) findViewById(R.id.editText_day);
-        mLocation = (EditText) findViewById(R.id.editText_where);
-        mReminder = (CheckBox) findViewById(R.id.checkBox_reminder);
-        mMinutesBefore = (EditText) findViewById(R.id.editText_minutesBefore);
+    private void initializeViews() {
+        mName = (EditText) rootView.findViewById(R.id.editText_name);
+        mEtTime = (EditText) rootView.findViewById(R.id.editText_time);
+        mEtDate = (EditText) rootView.findViewById(R.id.editText_day);
+        mLocation = (EditText) rootView.findViewById(R.id.editText_where);
+        mReminder = (CheckBox) rootView.findViewById(R.id.checkBox_reminder);
+        mMinutesBefore = (EditText) rootView.findViewById(R.id.editText_minutesBefore);
+        floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.todo_action_button);
 
-        InputMethodManager im = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager im = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         im.hideSoftInputFromWindow(mEtTime.getWindowToken(), 0);
         im.hideSoftInputFromWindow(mEtDate.getWindowToken(), 0);
 
@@ -126,8 +137,9 @@ public class TodoActivity extends ActionBarActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
+
                     DialogFragment newFragment = new TimePickerFragment();
-                    newFragment.show(getSupportFragmentManager(), "timePicker");
+                    newFragment.show(((MainActivity)getActivity()).getSupportFragmentManager(), "timePicker");
                 }else {
                     setEtTime();
                 }
@@ -139,35 +151,19 @@ public class TodoActivity extends ActionBarActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
                     DialogFragment newFragment = new DatePickerFragment();
-                    newFragment.show(getSupportFragmentManager(), "datePicker");
+                    newFragment.show(((MainActivity)getActivity()).getSupportFragmentManager(), "datePicker");
                 }else {
                     setEtDate();
                 }
             }
         });
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_todo, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createTodo(view);
+            }
+        });
     }
 
     public static class TimePickerFragment extends DialogFragment

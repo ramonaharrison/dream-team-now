@@ -2,6 +2,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,10 +104,11 @@ public class CustomViewListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        Intent intent = new Intent(context, WebActivity.class);
-        intent.putExtra("url", url);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+        WebFragment webFragment = new WebFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("url",url);
+        webFragment.setArguments(bundle);
+        ((MainActivity) context).replaceFragment(webFragment);
     }
 }
 

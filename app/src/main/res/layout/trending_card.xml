@@ -115,7 +115,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_arrow_forward_white_24dp"
-            android:onClick="moreNews"
             android:text="View more stories"
             android:background="@color/primaryColor"
             android:textColor="@color/text_icon"/>

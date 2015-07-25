@@ -1,12 +1,18 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
+import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.ramonaharrison.dev.dreamteamnow.NYTAPI.Doc;
 import com.ramonaharrison.dev.dreamteamnow.NYTAPI.Result;
@@ -14,36 +20,44 @@ import com.ramonaharrison.dev.dreamteamnow.NYTAPI.Result;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class NewsActivity extends AppCompatActivity{
+/**
+ * Created by c4q-anthonyf on 7/24/15.
+ */
+public class NewsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private NewsAdapter newsAdapter;
     private List news = new ArrayList<>(0);
 
+    private View rootView;
+    private Context context;
     // add menu item to close activity/go back
 
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_news,container,false);
+
+        context = container.getContext();
 
         getBundleFromIntent();
         initializeRecyclerView();
         setAdapter();
 
+        return rootView;
     }
 
     private void getBundleFromIntent(){
 
-        if(getIntent().getExtras().containsKey("news")) {
-            Object obj = getIntent().getExtras().get("news");
+        if(getArguments().get("news") != null) {
+            Object obj = getArguments().get("news");
             if (obj != null) {
                 news = (List<Result>) obj;
             }
         }
-        else if(getIntent().getExtras().containsKey("query")){
-            Object obj = getIntent().getExtras().get("query");
+        else if(getArguments().get("query") != null){
+            Object obj = getArguments().get("query");
             if (obj != null) {
                 news = (List<Doc>) obj;
             }
@@ -51,31 +65,27 @@ public class NewsActivity extends AppCompatActivity{
     }
 
     private void initializeRecyclerView() {
-        recyclerView = (RecyclerView) findViewById(R.id.newsList);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.newsList);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
     }
 
     private void setAdapter() {
-        newsAdapter = new NewsAdapter(news, getApplicationContext());
+        newsAdapter = new NewsAdapter(news, context);
         recyclerView.setAdapter(newsAdapter);
 
     }
 
 
-
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_news, menu);
-        return true;
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.menu_news, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onContextItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -83,15 +93,18 @@ public class NewsActivity extends AppCompatActivity{
 
         //noinspection SimplifiableIfStatement
         if(id == R.id.action_search){
-            Intent searchNewsIntent = new Intent(this, NewsSearchActivity.class);
-            startActivity(searchNewsIntent);
-            overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
+            ((MainActivity) getActivity()).replaceFragment(new NewsSearchFragment());
+            getActivity().overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
         }
         if (id == R.id.action_close) {
-            this.finish();
+            ((MainActivity) getActivity()).replaceFragment(new PlaceHolderFragment());
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
 }

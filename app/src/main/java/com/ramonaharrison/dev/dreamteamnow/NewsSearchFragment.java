@@ -1,12 +1,16 @@
 package com.ramonaharrison.dev.dreamteamnow;
 
 import android.app.DatePickerDialog;
+import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -28,8 +32,10 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-
-public class NewsSearchActivity extends AppCompatActivity implements View.OnClickListener {
+/**
+ * Created by c4q-anthonyf on 7/24/15.
+ */
+public class NewsSearchFragment extends Fragment implements View.OnClickListener {
 
     private static int beginDay;
     private static int beginMonth;
@@ -55,30 +61,52 @@ public class NewsSearchActivity extends AppCompatActivity implements View.OnClic
 
     ProgressBar progressSearch;
 
+    View rootView;
+    Context context;
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_search);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_news_search, container, false);
+        context = container.getContext().getApplicationContext();
 
         dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
 
         findViewsById();
         setupDayfields();
         setDateTimeField();
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String queryString = searchQuery.getText().toString();
+                String fullBeginDate = beginYear + "" +beginMonth +"" + beginDay;
+                String fullEndDate =endYear + "" +endMonth +"" + endDay;
+
+                if(queryString.length() > 0){
+                    getNewsData(queryString,fullBeginDate,fullEndDate);
+                }
+                else{
+                    Toast.makeText(context, "Don't leave any fields blank!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        return rootView;
     }
 
     private void findViewsById() {
-        searchQuery = (EditText) findViewById(R.id.searchQuery);
+        searchQuery = (EditText) rootView.findViewById(R.id.searchQuery);
         searchQuery.requestFocus();
 
-        beginDate = (EditText) findViewById(R.id.beginDate);
+        beginDate = (EditText) rootView.findViewById(R.id.beginDate);
         beginDate.setInputType(InputType.TYPE_NULL);
 
-        endDate = (EditText) findViewById(R.id.endDate);
+        endDate = (EditText) rootView.findViewById(R.id.endDate);
         endDate.setInputType(InputType.TYPE_NULL);
 
-        searchButton = (Button) findViewById(R.id.newsSearchButton);
-        progressSearch = (ProgressBar) findViewById(R.id.progressBarNews);
+        searchButton = (Button) rootView.findViewById(R.id.newsSearchButton);
+        progressSearch = (ProgressBar) rootView.findViewById(R.id.progressBarNews);
 
 
     }
@@ -98,7 +126,7 @@ public class NewsSearchActivity extends AppCompatActivity implements View.OnClic
         endDate.setOnClickListener(this);
 
         Calendar newCalendar = Calendar.getInstance();
-        beginDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+        beginDatePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
@@ -111,7 +139,7 @@ public class NewsSearchActivity extends AppCompatActivity implements View.OnClic
 
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
-        endDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+        endDatePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
@@ -131,19 +159,6 @@ public class NewsSearchActivity extends AppCompatActivity implements View.OnClic
             beginDatePickerDialog.show();
         } else if(view == endDate) {
             endDatePickerDialog.show();
-        }
-    }
-
-    public void searchForNews(View v){
-        String queryString = searchQuery.getText().toString();
-        String fullBeginDate = beginYear + "" +beginMonth +"" + beginDay;
-        String fullEndDate =endYear + "" +endMonth +"" + endDay;
-
-        if(queryString.length() > 0){
-            getNewsData(queryString,fullBeginDate,fullEndDate);
-        }
-        else{
-            Toast.makeText(this,"Don't leave any fields blank!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -171,18 +186,20 @@ public class NewsSearchActivity extends AppCompatActivity implements View.OnClic
             public void failure(RetrofitError error) {
                 Log.d("retroNewsSearchFail", "URL: " + error.getUrl() + "||| Error: " + error.toString());
                 progressSearch.setVisibility(View.GONE);
-                Toast.makeText(NewsSearchActivity.this,"Error, check fields.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Error, check fields.",Toast.LENGTH_SHORT).show();
 
             }
         });
     }
 
     private void startNewsSearch(){
-        Intent searchNewsIntent = new Intent(this, NewsActivity.class);
-        searchNewsIntent.putExtra("query", (Serializable) queriedResponse);
-        startActivity(searchNewsIntent);
-        overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
-        this.finish();
+        NewsFragment newsFragment = new NewsFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("query", (Serializable) queriedResponse);
+        newsFragment.setArguments(bundle);
+        ((MainActivity) getActivity()).replaceFragment(newsFragment);
+        getActivity().overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
     }
 
 

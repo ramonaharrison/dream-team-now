@@ -3,6 +3,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.ramonaharrison.dev.dreamteamnow.db.SQLController;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -247,7 +249,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 View itemView = LayoutInflater.
                         from(parent.getContext()).
                         inflate(R.layout.map_card, parent, false);
-                MainActivity.setMapItemView(itemView);
+                MainFragment.setMapItemView(itemView);
 
                 return new MapViewHolder(itemView);
             }else{
@@ -286,9 +288,11 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     long id = ((TodoInfo) cardList.get(position)).getId();
-                    Intent intent = new Intent(v.getContext(), TodoActivity.class);
-                    intent.putExtra("id", id);
-                    v.getContext().startActivity(intent);
+                    Bundle bundle = new Bundle();
+                    bundle.putLong("id", id);
+                    TodoFragment todo = new TodoFragment();
+                    todo.setArguments(bundle);
+                    ((MainActivity) v.getContext()).replaceFragment(todo);
                 }
             });
 
@@ -337,6 +341,19 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             TrendInfo trendInfo = (TrendInfo) cardList.get(position);
             TrendingViewHolder trendViewHolder = (TrendingViewHolder) viewHolder;
             trendViewHolder.progress.setVisibility(View.VISIBLE);
+
+            trendViewHolder.moreButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NewsFragment newsFragment = new NewsFragment();
+                    Bundle bundle = new Bundle();
+                    TrendInfo info = (TrendInfo) cardList.get(position);
+                    bundle.putSerializable("news",(Serializable) info.getNewsStories());
+                    newsFragment.setArguments(bundle);
+                    ((MainActivity) context).replaceFragment(newsFragment);
+                    ((MainActivity) context).overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.slide_down_from_top);
+                }
+            });
 
             trendInfo.setFields(trendViewHolder, context);
             setAnimation(trendViewHolder.trendCard, position);

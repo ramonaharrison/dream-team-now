@@ -29,7 +29,6 @@ public class TrendInfo extends CardInfo {
 
 
     public TrendInfo() {
-
         setType("trend");
         setPriority(2);
         getNewsData();
@@ -98,4 +97,5 @@ public void getNewsData(){
         };
         new Handler().postDelayed(runnable,3000);
     }
+
 }
