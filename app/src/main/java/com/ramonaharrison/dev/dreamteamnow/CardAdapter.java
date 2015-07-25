@@ -3,6 +3,7 @@ package com.ramonaharrison.dev.dreamteamnow;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -247,7 +248,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 View itemView = LayoutInflater.
                         from(parent.getContext()).
                         inflate(R.layout.map_card, parent, false);
-                MainActivity.setMapItemView(itemView);
+                MainFragment.setMapItemView(itemView);
 
                 return new MapViewHolder(itemView);
             }else{
@@ -286,9 +287,11 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     long id = ((TodoInfo) cardList.get(position)).getId();
-                    Intent intent = new Intent(v.getContext(), TodoActivity.class);
-                    intent.putExtra("id", id);
-                    v.getContext().startActivity(intent);
+                    Bundle bundle = new Bundle();
+                    bundle.putLong("id", id);
+                    TodoFragment todo = new TodoFragment();
+                    todo.setArguments(bundle);
+                    ((MainActivity) v.getContext()).replaceFragment(todo);
                 }
             });
 

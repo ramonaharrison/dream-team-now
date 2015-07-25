@@ -117,6 +117,9 @@ public class WeatherInfo extends CardInfo {
         lowC = new String[5];
         summaries = new String[5];
         iconSummaries = new String[5];
+
+        longitude = -74.0059;
+        latitude = 40.7127;
     }
 
     private void retrofitWeatherConditions() {
@@ -174,6 +177,7 @@ public class WeatherInfo extends CardInfo {
     private void retrofitWeatherLocation() {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(GEO_ENDPOINT)
+                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build();
 
         WeatherLocationAPI weatherLocationAPI = restAdapter.create(WeatherLocationAPI.class);
@@ -189,7 +193,7 @@ public class WeatherInfo extends CardInfo {
                 state = location.getState();
                 city = location.getCity();
                 zip = location.getZip();
-                Log.d("RetroFit!","Success");
+                Log.d("RetroFit - Weather","Success");
                 retrofitWeatherConditions();
                 locationComplete = true;
             }
